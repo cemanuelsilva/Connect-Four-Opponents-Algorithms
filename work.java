@@ -23,6 +23,21 @@ public class work{
                 }
             }
 
+            lastmove = 'x';
+            heuristic = 0;
+            depth = 0;
+            
+        }
+
+        public Game(char configInicial[][], char lastmove){
+
+            this.configInicial = new char[6][7];
+            
+            for(int i=0; i<6; i++) {
+                for(int j=0; j<7;j++) {
+                    this.configInicial[i][j] = configInicial[i][j];
+                }
+            }
             this.lastmove = lastmove;
             this.depth = depth;
 
@@ -35,7 +50,7 @@ public class work{
         for (int x = 1; x < 6; x++) {
             for (int y = 0; y < 7; y++) {
                 // just a print so it does not make new lines for every char
-                System.out.print(configInicial[x][y]);
+                System.out.print(configInicial[x][y] + " ");
             }
             // new line once one column (board[x][0] - board[x][8]) is printed
             // note: you proably want to turn around the x and y above since
@@ -44,7 +59,7 @@ public class work{
         }
 
         for(int i = 1; i < 8; i++){
-            System.out.print(i);
+            System.out.print(i + " ");
             }
             System.out.println();
         }
@@ -79,9 +94,11 @@ public class work{
 
             for(int move : possible){
 
-                Game novo = new Game();
+                Game novo = new Game(this.configInicial, this.lastmove);
                 novo.pai = this;
                 novo.MakeMove(move);
+                novo.printBoard();
+                System.out.println("---Verify--");
                 tabuleiros.add(novo);
                 
             }
@@ -161,7 +178,8 @@ public class work{
 
 
     public static void main(String Argrs[]){
-
+        
+    
         System.out.println("----------");
         System.out.println("Welcome!");
         System.out.println("1º - Two Players");
@@ -202,13 +220,15 @@ public class work{
                 System.out.println("--------\n");
 
                 while(true){
-                 System.out.println("It's " + boas.changePlay() + " turn!\n");
+                 System.out.println("It's " + boas.changePlay() + " turn!");
+                 System.out.println("Make a move by choosing your coordinates to play (1 to 7).\n");
                  System.out.println("Possible moves: " + boas.PossibleMoves());  
-                 System.out.println("\n--------------\n");
+                 System.out.println("\n");
                  
                  boas.printBoard();
                  int play = sc.nextInt();
                  boas.MakeMove(play);
+                 //boas.MakeDescendents();
                  System.out.println();
                  System.out.println("-----------------------");
                 }
