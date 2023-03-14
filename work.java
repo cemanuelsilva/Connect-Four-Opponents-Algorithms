@@ -51,30 +51,27 @@ public class work{
     
 
         // dar fix
-        /*
-        Vector<Integer> PossibleMoves(){
+        
+        LinkedList<Integer> PossibleMoves(){
 
-            Vector<Integer> possible = new Vector<>();
+            LinkedList<Integer> possible = new LinkedList<>();
 
-            for(int i = 5; i > 0; i++){
-                for(int j = 2; j < 8; j++){
-                    if(MakeMove(j) == true){
-                        possible.add(j);
-                    }
-                    else{
-                        continue;
-                    }
+            for(int j = 0; j < 7; j++){
+                if(configInicial[1][j] == '-'){
+                    possible.add(j+1);
                 }
             }
 
-
+            /*
             for(int i = 0; i < possible.size(); i++){
-                System.out.println(possible.get(i));
+                System.out.print(possible.get(i));
+            }
+            */
             
+            return possible;
+
         }
-        return possible;
-        }
-        */        
+              
 
 
 
@@ -186,9 +183,11 @@ public class work{
                 System.out.println("START!");
                 System.out.println("--------\n");
 
-                //boas.PossibleMoves();  
                 while(true){
                  System.out.println("It's " + boas.changePlay() + " turn!\n");
+                 System.out.println("Possible moves: " + boas.PossibleMoves());  
+                 System.out.println("\n--------------\n");
+                 
                  boas.printBoard();
                  int play = sc.nextInt();
                  boas.MakeMove(play);
