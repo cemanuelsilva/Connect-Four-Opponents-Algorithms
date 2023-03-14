@@ -4,8 +4,14 @@ public class work{
 
     static class Game{
 
+        Game pai;
+
         char configInicial[][];
-        int lastmove;
+        char lastmove;
+        int lastMovement;
+        int depth;
+        int heuristic;
+
 
         Game(){
 
@@ -18,6 +24,7 @@ public class work{
             }
 
             this.lastmove = lastmove;
+            this.depth = depth;
 
         }
 
@@ -44,6 +51,7 @@ public class work{
     
 
         // dar fix
+        /*
         Vector<Integer> PossibleMoves(){
 
             Vector<Integer> possible = new Vector<>();
@@ -64,20 +72,30 @@ public class work{
                 System.out.println(possible.get(i));
             
         }
-        
         return possible;
         }
+        */        
 
 
 
-        boolean MakeMove(int move){
+        void MakeMove(int move){
+            // 1 - 7
 
+            lastMovement = move;
             move--;
 
-            if(move >= 6 && move <= 0){
-                System.out.println("Not possible!");   
+            if(move > 6 || move < 0){
+                System.out.println("Not possible!");
+                return;   
             }
             else{
+                if(configInicial[1][move] != '-'){
+                    System.out.println("Not possible!");
+                    return;
+                    
+                }
+
+                else{
                 for(int i = 5; i > 0; i--){
                         if(configInicial[i][move] != '-'){
                             continue;
@@ -85,12 +103,12 @@ public class work{
                         else{
                             configInicial[i][move] = changePlay();
                             lastmove = changePlay();
-                            return true;
+                            break;
 
                         }
                     }
                 }
-            return false;
+            }
                
         }
 
@@ -102,6 +120,16 @@ public class work{
                 return 'x';
             }
             
+        }
+
+        void whoStarts(int escolha){
+
+            if(escolha==1){
+                lastmove='x';
+            }
+            else{
+                lastmove='o';
+            }
         }
 
         /*
@@ -121,28 +149,51 @@ public class work{
 
         System.out.println("----------");
         System.out.println("Welcome!");
-        System.out.println("----------");
         System.out.println("1º - Two Players");
+        System.out.println("2º - Minimax");
+        System.out.println("3º - Alpha");
+        System.out.println("4º - MonteCarlo");
         System.out.println("----------");
 
         Scanner sc = new Scanner(System.in);
         int answer = sc.nextInt();
         
         System.out.println("Have fun!");
-        System.out.println("----------");
+        System.out.println("----------\n");
 
         switch(answer){
             case 1:
+                System.out.println("----------");
+                System.out.println("1º- Ir em primeiro");
+                System.out.println("2º- Ir em segundo");
+                System.out.println("-----------");
+
                 Game boas = new Game();
+                int escolha = 0;
+
+                while(escolha != 1 && escolha != 2){
+                escolha = sc.nextInt();
+                if((escolha != 1 || escolha != 2)){
+                    System.out.println("--------------------------");
+                    System.out.println("Insira uma opção correta");
+                    System.out.println("--------------------------");
+                    }
+                }
+
+                boas.whoStarts(escolha);
+
                 System.out.println("--------");
                 System.out.println("START!");
-                System.out.println("--------");
+                System.out.println("--------\n");
+
                 //boas.PossibleMoves();  
-                boas.printBoard();
                 while(true){
-                 System.out.println("It's " + boas.changePlay() + " turn!");
+                 System.out.println("It's " + boas.changePlay() + " turn!\n");
+                 boas.printBoard();
                  int play = sc.nextInt();
-                 //boas.printBoard();
+                 boas.MakeMove(play);
+                 System.out.println();
+                 System.out.println("-----------------------");
                 }
                 
         }
