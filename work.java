@@ -67,8 +67,26 @@ public class work{
                 System.out.print(possible.get(i));
             }
             */
-            
+
             return possible;
+
+        }
+
+        LinkedList<Game> MakeDescendents(){
+
+            LinkedList<Integer> possible = PossibleMoves();
+            LinkedList<Game> tabuleiros = new LinkedList<>();
+
+            for(int move : possible){
+
+                Game novo = new Game();
+                novo.pai = this;
+                novo.MakeMove(move);
+                tabuleiros.add(novo);
+                
+            }
+
+            return tabuleiros;
 
         }
               
