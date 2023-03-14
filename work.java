@@ -43,12 +43,34 @@ public class work{
         }
     
 
+        // dar fix
+        Vector<Integer> PossibleMoves(){
 
-        void PossibleMoves(){
+            Vector<Integer> possible = new Vector<>();
+
+            for(int i = 5; i > 0; i++){
+                for(int j = 2; j < 8; j++){
+                    if(MakeMove(j) == true){
+                        possible.add(j);
+                    }
+                    else{
+                        continue;
+                    }
+                }
+            }
+
+
+            for(int i = 0; i < possible.size(); i++){
+                System.out.println(possible.get(i));
             
         }
+        
+        return possible;
+        }
 
-        void MakeMove(int move){
+
+
+        boolean MakeMove(int move){
 
             move--;
 
@@ -63,10 +85,12 @@ public class work{
                         else{
                             configInicial[i][move] = changePlay();
                             lastmove = changePlay();
-                            break;
+                            return true;
+
                         }
                     }
                 }
+            return false;
                
         }
 
@@ -113,12 +137,12 @@ public class work{
                 System.out.println("--------");
                 System.out.println("START!");
                 System.out.println("--------");
+                //boas.PossibleMoves();  
                 boas.printBoard();
                 while(true){
                  System.out.println("It's " + boas.changePlay() + " turn!");
                  int play = sc.nextInt();
-                 boas.MakeMove(play); 
-                 boas.printBoard();  
+                 //boas.printBoard();
                 }
                 
         }
