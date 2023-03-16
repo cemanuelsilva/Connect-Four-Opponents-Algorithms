@@ -2,6 +2,9 @@ import java.util.*;
 
 public class work{
 
+    final static int rows = 6; 
+    final static int columns = 7;
+
     static class Game{
 
         Game pai;
@@ -17,7 +20,7 @@ public class work{
 
             configInicial = new char[6][7];
 
-            for(int i = 1; i < 6; i++){
+            for(int i = 0; i < 6; i++){
                 for(int j = 0; j < 7; j++){
                     configInicial[i][j] = '-';
                 }
@@ -29,7 +32,7 @@ public class work{
             
         }
 
-        public Game(char configInicial[][], char lastmove){
+        public Game(char configInicial[][], char lastmove, int depth){
 
             this.configInicial = new char[6][7];
             
@@ -47,7 +50,7 @@ public class work{
 
         public void printBoard() {
       
-        for (int x = 1; x < 6; x++) {
+        for (int x = 0; x < 6; x++) {
             for (int y = 0; y < 7; y++) {
                 // just a print so it does not make new lines for every char
                 System.out.print(configInicial[x][y] + " ");
@@ -94,9 +97,10 @@ public class work{
 
             for(int move : possible){
 
-                Game novo = new Game(this.configInicial, this.lastmove);
+                Game novo = new Game(this.configInicial, this.lastmove, this.depth);
                 novo.pai = this;
                 novo.MakeMove(move);
+                novo.depth++;
                 novo.printBoard();
                 System.out.println("---Verify--");
                 tabuleiros.add(novo);
@@ -154,15 +158,115 @@ public class work{
             
         }
 
+        //human_play()
+
+        //pc_play()
+
         void whoStarts(int escolha){
 
             if(escolha==1){
                 lastmove='x';
+                //human
             }
             else{
                 lastmove='o';
+                //pc
             }
         }
+
+
+        boolean VerifyDraw(){
+            int counter =0;
+            for(int i = 0; i<rows; i++){
+                for(int j = 0; j<columns; i++){
+                    if(configInicial[i][j] != '-'){
+                        counter++;
+                    }
+                }
+            }
+            if(counter == 42){
+                System.out.println("It's a draw match!");
+                System.out.println("Please, play again.");
+                return true;
+            }else{
+                return false;
+            }
+        }
+
+
+        boolean winner(){
+            //linhas
+            String rows = "";
+            for(int i = 0; i<work.rows; i++){
+                for(int j = 0; j<work.columns; j++){
+                    rows += configInicial[i][j];
+                }
+                if(rows.contains("xxxx") || rows.contains("oooo")){
+                    // ?: é um operador ternário
+                    //(condition) ? (return if true) : (return if false);
+                    System.out.println(rows.contains("xxxx") ? "Ganhou o jogador 1!" : "Ganhou o jogador 2!");
+                    return true;
+                }
+                
+                rows = "";
+                
+            }
+
+            //colunas
+            String columns = "";
+            for(int j = 0; j<work.columns; j++){
+                for(int i = 0; i<work.rows; i++){
+                    columns +=configInicial[i][j];
+                }
+                if(columns.contains("xxxx") ||columns.contains("oooo")){
+                    System.out.println(columns.contains("xxxx") ? "Ganhou o jogador 1!" : "Ganhou o jogador 2!");
+                    return true;
+                }
+                columns = "";
+            }
+
+
+            //diagonais
+            String diagonal1 = "";
+            String diagonal2 = "";
+            for (int i = 0; i < 3; i++) {
+                for (int j = 0; j < 4; j++) {
+                    diagonal1 += configInicial[i][j] + configInicial[i+1][j+1] + configInicial[i+2][j+2] + configInicial[i+3][j+3];
+                    diagonal2 += configInicial[i][j+3] + configInicial[i+1][j+2] + configInicial[i+2][j+1] + configInicial[i+3][j];
+                    if (diagonal1.contains("xxxx") || diagonal1.contains("oooo")){
+                        System.out.println(diagonal1.contains("xxxx") ? "Ganhou o jogador 1!!" : "Ganhou o jogador 2!!");
+                         return true;
+                    }
+                    if (diagonal2.contains("xxxx") || diagonal2.contains("oooo")) {
+                        System.out.println(diagonal2.contains("xxxx") ? "Ganhou o jogador 1!!" : "Ganhou o jogador 2!!");
+                        return true;
+                    }
+                }  
+                diagonal1 = "";
+                diagonal2 = "";
+            }
+            return false;
+        }
+
+    }
+
+
+        /* 
+        void verify(){
+
+            //Linha
+            for (int row = 0; row < 5; row++) {
+                for (int col = 0; col < 4; col++) {
+                    if (configInicial[row][col] != '-' && configInicial[row][col] == configInicial[row][col+1] && configInicial[row][col] == configInicial[row][col+2] && configInicial[row][col] == configInicial[row][col+3]){
+                        System.out.println("Acabou");
+                    }
+                }
+
+        }
+        
+        
+    }
+    */
 
         /*
         boolean winner(){
@@ -174,7 +278,7 @@ public class work{
         }
         */
 
-    }
+    
 
 
     public static void main(String Argrs[]){
@@ -219,20 +323,22 @@ public class work{
                 System.out.println("START!");
                 System.out.println("--------\n");
 
-                while(true){
-                 System.out.println("It's " + boas.changePlay() + " turn!");
-                 System.out.println("Make a move by choosing your coordinates to play (1 to 7).\n");
-                 System.out.println("Possible moves: " + boas.PossibleMoves());  
-                 System.out.println("\n");
-                 
-                 boas.printBoard();
-                 int play = sc.nextInt();
-                 boas.MakeMove(play);
+                while(!boas.winner()){
+                    System.out.println("It's " + boas.changePlay() + " turn!");
+                    System.out.println("Make a move by choosing your coordinates to play (1 to 7).\n");
+                    System.out.println("Possible moves: " + boas.PossibleMoves());  
+                    System.out.println("\n");
+                    
+
+                    boas.printBoard();
+                    int play = sc.nextInt();
+                    boas.MakeMove(play);
                  //boas.MakeDescendents();
                  System.out.println();
                  System.out.println("-----------------------");
                 }
-                //break;
+                boas.printBoard();
+                break;
 
             case 2:
                 break;
