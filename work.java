@@ -2,9 +2,6 @@ import java.util.*;
 
 public class work{
 
-    final static int rows = 6; 
-    final static int columns = 7;
-
     static class Game{
 
         Game pai;
@@ -138,7 +135,7 @@ public class work{
                         }
                         else{
                             configInicial[i][move] = changePlay();
-                            lastmove = changePlay();
+                            lastmove = configInicial[i][move];
                             break;
 
                         }
@@ -146,6 +143,9 @@ public class work{
                 }
             }
                
+            //evaluation();
+            this.depth++;
+
         }
 
         char changePlay(){
@@ -177,8 +177,8 @@ public class work{
 
         boolean VerifyDraw(){
             int counter =0;
-            for(int i = 0; i<rows; i++){
-                for(int j = 0; j<columns; i++){
+            for(int i = 0; i<6; i++){
+                for(int j = 0; j<7; i++){
                     if(configInicial[i][j] != '-'){
                         counter++;
                     }
@@ -192,91 +192,150 @@ public class work{
                 return false;
             }
         }
+        
+        
+        
+        char winner(){
 
-
-        boolean winner(){
-            //linhas
-            String rows = "";
-            for(int i = 0; i<work.rows; i++){
-                for(int j = 0; j<work.columns; j++){
-                    rows += configInicial[i][j];
+            if(verifyColumn() != '-'){
+                if(verifyColumn() == 'x'){
+                    System.out.println("Ganhou: x");
+                    return 'x';
                 }
-                if(rows.contains("xxxx") || rows.contains("oooo")){
-                    // ?: é um operador ternário
-                    //(condition) ? (return if true) : (return if false);
-                    System.out.println(rows.contains("xxxx") ? "Ganhou o jogador 1!" : "Ganhou o jogador 2!");
-                    return true;
+                else{
+                    System.out.println("Ganhou: o");
+                    return 'o';
                 }
-                
-                rows = "";
-                
             }
+
+            if(verifyLine() != '-'){
+                if(verifyLine() == 'x'){
+                    System.out.println("Ganhou: x");
+                    return 'x';
+                }
+                else{
+                    System.out.println("Ganhou: o");
+                    return 'o';
+                }
+            }
+
+            if(verifyDiagonalLeft() != '-'){
+                if(verifyDiagonalLeft() == 'x'){
+                    System.out.println("Ganhou: x");
+                    return 'x';
+                }
+                else{
+                    System.out.println("Ganhou: o");
+                    return 'o';
+                }
+            }
+
+            if(verifyDiagonalRight() != '-'){
+                if(verifyDiagonalRight() == 'x'){
+                    System.out.println("Ganhou: x");
+                    return 'x';
+                }
+                else{
+                    System.out.println("Ganhou: o");
+                    return 'o';
+                }
+            }
+
+            return '-';
+        }
+        
+        char verifyLine(){
+            
+            for(int i = 0; i < 6; i++){
+                for(int j = 0; j <4; j++){
+                    if(configInicial[i][j] != '-'){
+                        if((configInicial[i][j] == configInicial[i][j+1] && configInicial[i][j] == configInicial[i][j+2] && configInicial[i][j] == configInicial[i][j+3])){
+                            //System.out.println("Ganhou: " + configInicial[i][j]);
+                            return configInicial[i][j];
+                        }
+                    }
+                }
+            }
+
+            return '-';
+        }
+
+        char verifyColumn(){
 
             //colunas
-            String columns = "";
-            for(int j = 0; j<work.columns; j++){
-                for(int i = 0; i<work.rows; i++){
-                    columns +=configInicial[i][j];
+            for(int i = 0; i < 3; i++){
+                for(int j = 0; j <7; j++){
+                    if(configInicial[i][j] != '-'){
+                        if((configInicial[i][j] == configInicial[i+1][j] && configInicial[i][j] == configInicial[i+2][j] && configInicial[i][j] == configInicial[i+3][j])){
+                            //System.out.println("Ganhou: " + configInicial[i][j]);
+                            return configInicial[i][j];
+                        }
+                    }
                 }
-                if(columns.contains("xxxx") ||columns.contains("oooo")){
-                    System.out.println(columns.contains("xxxx") ? "Ganhou o jogador 1!" : "Ganhou o jogador 2!");
-                    return true;
-                }
-                columns = "";
             }
+
+            return '-';
+        }
 
 
             //diagonais
-            String diagonal1 = "";
-            String diagonal2 = "";
-            for (int i = 0; i < 3; i++) {
-                for (int j = 0; j < 4; j++) {
-                    diagonal1 += configInicial[i][j] + configInicial[i+1][j+1] + configInicial[i+2][j+2] + configInicial[i+3][j+3];
-                    diagonal2 += configInicial[i][j+3] + configInicial[i+1][j+2] + configInicial[i+2][j+1] + configInicial[i+3][j];
-                    if (diagonal1.contains("xxxx") || diagonal1.contains("oooo")){
-                        System.out.println(diagonal1.contains("xxxx") ? "Ganhou o jogador 1!!" : "Ganhou o jogador 2!!");
-                         return true;
+            char verifyDiagonalRight(){
+
+            for(int i = 0; i < 3; i++){
+                for(int j = 0; j < 4; j++){
+                    if(configInicial[i][j] != '-'){
+                        if((configInicial[i][j] == configInicial[i+1][j-1] && configInicial[i][j] == configInicial[i+2][j-2] && configInicial[i][j] == configInicial[i+3][j-3])){
+                            //System.out.println("Ganhou: " + configInicial[i][j]);
+                            return configInicial[i][j];
+                        }
                     }
-                    if (diagonal2.contains("xxxx") || diagonal2.contains("oooo")) {
-                        System.out.println(diagonal2.contains("xxxx") ? "Ganhou o jogador 1!!" : "Ganhou o jogador 2!!");
-                        return true;
-                    }
-                }  
-                diagonal1 = "";
-                diagonal2 = "";
+                }
             }
-            return false;
+
+            return '-';
         }
 
-    }
-
+        char verifyDiagonalLeft(){
+            for(int i = 0; i < 3; i++){
+                for(int j = 0; j < 4; j++){
+                    if(configInicial[i][j] != '-'){
+                        if((configInicial[i][j] == configInicial[i+1][j+1] && configInicial[i][j] == configInicial[i+2][j+2] && configInicial[i][j] == configInicial[i+3][j+3])){
+                            //System.out.println("Ganhou: " + configInicial[i][j]);
+                            return configInicial[i][j];
+                        }
+                    }
+                }
+            }
+            
+            return '-';
+        }
+    
 
         /* 
-        void verify(){
-
-            //Linha
-            for (int row = 0; row < 5; row++) {
-                for (int col = 0; col < 4; col++) {
-                    if (configInicial[row][col] != '-' && configInicial[row][col] == configInicial[row][col+1] && configInicial[row][col] == configInicial[row][col+2] && configInicial[row][col] == configInicial[row][col+3]){
-                        System.out.println("Acabou");
-                    }
-                }
-
+        int minimax(Game board){
+            return 1;
         }
-        
-        
-    }
-    */
 
-        /*
-        boolean winner(){
-            for(int i = 5; i < 0; i++){
-                for(int j = 7; j < 0; j++){
-                    if(configInicial[i][j] == )
-                }
+        int bestmove(){
+
+            int bestScore = -1000;
+            int bestMove;
+            int score;
+
+            LinkedList<Game> tabuleiros = MakeDescendents();
+
+            for(Game tab : tabuleiros){
+                score = minimax(tab);
             }
+
+
+            return 0;
+
         }
         */
+
+    }
+
 
     
 
@@ -323,7 +382,11 @@ public class work{
                 System.out.println("START!");
                 System.out.println("--------\n");
 
-                while(!boas.winner()){
+                while(boas.winner() == '-'){
+                    if(boas.VerifyDraw() == true){
+                        break;
+                    }
+                    
                     System.out.println("It's " + boas.changePlay() + " turn!");
                     System.out.println("Make a move by choosing your coordinates to play (1 to 7).\n");
                     System.out.println("Possible moves: " + boas.PossibleMoves());  
@@ -333,9 +396,9 @@ public class work{
                     boas.printBoard();
                     int play = sc.nextInt();
                     boas.MakeMove(play);
-                 //boas.MakeDescendents();
-                 System.out.println();
-                 System.out.println("-----------------------");
+                    //boas.MakeDescendents();
+                    System.out.println();
+                    System.out.println("-----------------------");
                 }
                 boas.printBoard();
                 break;
