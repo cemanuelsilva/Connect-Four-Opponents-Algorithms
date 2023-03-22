@@ -282,9 +282,9 @@ public class work{
             char verifyDiagonalRight(){
 
             for(int i = 0; i < 3; i++){
-                for(int j = 0; j < 7; j++){
+                for(int j = 0; j < 4; j++){
                     if(configInicial[i][j] != '-'){
-                        if((configInicial[i][j] == configInicial[i+1][j-1] && configInicial[i][j] == configInicial[i+2][j-2] && configInicial[i][j] == configInicial[i+3][j-3])){
+                        if((configInicial[i][j+3] == configInicial[i+1][j+2] && configInicial[i][j+3] == configInicial[i+2][j+1] && configInicial[i][j+3] == configInicial[i+3][j])){
                             //System.out.println("Ganhou: " + configInicial[i][j]);
                             return configInicial[i][j];
                         }
@@ -315,156 +315,126 @@ public class work{
 
             int count = 0;
             
-            count += evalColumn();
-            count += evalDiagonalLeft();
+            //count += evalColumn();
+            //count += evalDiagonalLeft();
             count += evalDiagonalRight();
-            count += evalLines();
+            //count += evalLines();
             
             System.out.println(count);
             return count;
         }
         
+        int eval_sup(int countX, int countY){
+
+                int count = 0;
+
+                if(countY == 4){
+                    count= 512;
+                    }
+                if(countX == 4){
+                    count= 512;
+                }
+                if(countY == 3 && countX == 0){
+                    count-= 50;
+                }
+                if(countY == 2 && countX == 0){
+                    count-=10;
+                }
+                if(countY == 1 && countX == 0){
+                    count=- 1;
+                }
+
+                if(countX == 3 && countY == 0){
+                    count+= 50;
+                }
+                if(countX == 2 && countY == 0){
+                    count+=10;
+                }
+                if(countX == 1 && countY == 0){
+                    count+= 1;
+                }
+
+            return count;
+        }
+
         int evalLines(){
-            
-            //linha
-            int count = 0;
-            int countX = 0;
-            int countY = 0;
-
-            for(int i = 0; i < 6; i++){
-                for(int j = 0; j <4; j++){
-                    if(configInicial[i][j] != '-'){
-                        if((configInicial[i][j] == 'x')){
-                            countX++;
-                        }
-                        else{
-                            countY++;
-                        }
-                    }
-    
-                }
-
-                if(countY == 3 && countX == 0){
-                    count-= 50;
-                }
-                if(countY == 2 && countX == 0){
-                    count-=10;
-                }
-                if(countY == 1 && countX == 0){
-                    count=- 1;
-                }
-                if(countX > 0 && countY > 0){
-                    count+= 0;
-                }
-    
-                if(countX == 3 && countY == 0){
-                    count-= 50;
-                }
-                if(countX == 2 && countY == 0){
-                    count-=10;
-                }
-                if(countX == 1 && countY == 0){
-                    count=- 1;
-                }
-                if(countX > 0 && countY > 0){
-                    count+= 0;
-                }
-            }
-
-
-            return count;
-        }
-
-        int evalColumn(){
 
             int count = 0;
             int countX = 0;
             int countY = 0;
-
-            for(int i = 0; i < 6; i++){
-                for(int j = 0; j <4; j++){
-                    if(configInicial[i][j] != '-'){
-                        if((configInicial[i][j] == 'x')){
-                            countX++;
-                        }
-                        else{
-                            countY++;
+        //nº de colunas
+            for(int k = 0; k<4; k++){
+                for(int i = 5; i > 0; i--){
+                    for(int j = 0; j <4; j++){
+                        if(configInicial[i][k+j] != '-'){
+                            if((configInicial[i][k+j] == 'x')){
+                                
+                                countX++;
+                            }else{
+                                countY++;
+                            }      
                         }
                     }
-                }
-
-                if(countY == 3 && countX == 0){
-                    count-= 50;
-                }
-                if(countY == 2 && countX == 0){
-                    count-=10;
-                }
-                if(countY == 1 && countX == 0){
-                    count=- 1;
-                }
-                if(countX > 0 && countY > 0){
-                    count+= 0;
-                }
-    
-                if(countX == 3 && countY == 0){
-                    count-= 50;
-                }
-                if(countX == 2 && countY == 0){
-                    count-=10;
-                }
-                if(countX == 1 && countY == 0){
-                    count=- 1;
-                }
-                if(countX > 0 && countY > 0){
-                    count+= 0;
+                    count += eval_sup(countX,countY);
+                    countX =0;
+                    countY = 0;
                 }
             }
+
             return count;
         }
+
+
+         int evalColumn(){
+
+            int count = 0;
+            int countX = 0;
+            int countY = 0;
+        //nº de colunas
+        for(int k = 0; k<7; k++){
+            for(int i = 0; i < 3; i++){
+                for(int j = 0; j <4; j++){
+                    if(configInicial[i+j][k] != '-'){
+                        if((configInicial[i+j][k] == 'x')){
+                            countX++;
+                        }else{
+                            countY++;
+                        }      
+                    }
+                }
+                count += eval_sup(countX,countY);
+                countX =0;
+                countY = 0;
+            }
+        }
+
+        return count;
+        }
+       
 
         int evalDiagonalRight(){
 
             int count = 0;
             int countX = 0;
             int countY = 0;
-
-            for(int i = 1; i < 4; i++){
-                for(int j = 1; j <8; j++){
-                    if(configInicial[i-1][j-1] != '-'){
-                        if((configInicial[i-1][j-1] == 'x')){
-                            countX++;
-                        }
-                        else{
-                            countY++;
+        //nº de colunas
+            for(int k = 0; k<3; k++){
+                for(int i = 5; i > 3; i--){
+                    for(int j = 0; j<4; j++){
+                        if(configInicial[i-k][k+j] != '-'){
+                            if((configInicial[i-k][k+j] == 'x')){                                
+                                countX++;
+                            }else{
+                                countY++;
+                            }      
                         }
                     }
+                    count += eval_sup(countX,countY);
+                    countX =0;
+                    countY = 0;
                 }
             }
-            if(countY == 3 && countX == 0){
-                count-= 50;
-            }
-            if(countY == 2 && countX == 0){
-                count-=10;
-            }
-            if(countY == 1 && countX == 0){
-                count=- 1;
-            }
-            if(countX > 0 && countY > 0){
-                count+= 0;
-            }
 
-            if(countX == 3 && countY == 0){
-                count-= 50;
-            }
-            if(countX == 2 && countY == 0){
-                count-=10;
-            }
-            if(countX == 1 && countY == 0){
-                count=- 1;
-            }
-            if(countX > 0 && countY > 0){
-                count+= 0;
-            }
             return count;
         }
 
@@ -474,8 +444,8 @@ public class work{
             int countX = 0;
             int countY = 0;
 
-            for(int i = 0; i < 3; i++){
-                for(int j = 0; j <4; j++){
+            for(int i = -1; i < 3; i++){
+                for(int j = -1; j <4; j++){
                     if(configInicial[i+1][j+1] != '-'){
                         if((configInicial[i+1][j+1] == 'x')){
                             countX++;
@@ -485,39 +455,18 @@ public class work{
                         }
                     }
                 }
-                if(countY == 3 && countX == 0){
-                    count-= 50;
-                }
-                if(countY == 2 && countX == 0){
-                    count-=10;
-                }
-                if(countY == 1 && countX == 0){
-                    count=- 1;
-                }
-                if(countX > 0 && countY > 0){
-                    count+= 0;
-                }
-    
-                if(countX == 3 && countY == 0){
-                    count-= 50;
-                }
-                if(countX == 2 && countY == 0){
-                    count-=10;
-                }
-                if(countX == 1 && countY == 0){
-                    count=- 1;
-                }
-                if(countX > 0 && countY > 0){
-                    count+= 0;
-                }
+
             }
 
             return count;
         }
 
-        /* 
-        int minimax(Game board){
-            return 1;
+        /*
+        int minimax(Game board, depth, isMaximizing){
+            char result = winner();
+            if(result != '-'){
+                
+            }
         }
 
         int bestmove(){
