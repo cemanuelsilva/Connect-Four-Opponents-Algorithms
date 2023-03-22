@@ -341,7 +341,7 @@ public class work{
                     count-=10;
                 }
                 if(countY == 1 && countX == 0){
-                    count=- 1;
+                    count -= 1;
                 }
 
                 if(countX == 3 && countY == 0){
