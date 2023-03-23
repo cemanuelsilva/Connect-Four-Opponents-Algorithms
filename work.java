@@ -410,33 +410,50 @@ public class work{
 
         return count;
         }
-       
 
-        int evalDiagonalRight(){
+
+        int evalsupDiagonalRight(int start){
 
             int count = 0;
             int countX = 0;
             int countY = 0;
-        //nº de colunas
-            for(int k = 0; k<3; k++){
-                for(int i = 5; i > 3; i--){
-                    for(int j = 0; j<4; j++){
-                        if(configInicial[i-k][k+j] != '-'){
-                            if((configInicial[i-k][k+j] == 'x')){                                
-                                countX++;
-                            }else{
-                                countY++;
-                            }      
-                        }
-                    }
-                    count += eval_sup(countX,countY);
-                    countX =0;
-                    countY = 0;
-                }
-            }
 
-            return count;
+        //nº de colunas
+        for(int k = 0; k<3; k++){
+            for(int i = start; i > 3; i--){
+                i = start;
+                System.out.println("-------");
+                for(int j = 0; j <4; j++){
+                    System.out.println("config: " + configInicial[start-k][j+k] + " i: " + (start-k) + " j: " + (start+k));
+                    if(configInicial[start-k][j+k] != '-'){
+                        if((configInicial[start-k][j+k] == 'x')){
+                            countX++;
+                        }else{
+                            countY++;
+                        }      
+                    }
+                    i--;
+                }
+                count += eval_sup(countX,countY);
+                countX =0;
+                countY = 0;
+                i = i + 3;
+            }
         }
+
+        return count;
+        }
+
+        int evalDiagonalRight(){
+        int count = 0;
+
+        for(int i = 5; i > 3; i--){
+            count += evalsupDiagonalRight(i);
+        }
+
+        return count;
+        }
+       
 
         int evalDiagonalLeft(){
             
