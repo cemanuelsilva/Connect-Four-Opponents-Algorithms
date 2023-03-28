@@ -412,7 +412,7 @@ public class work{
 
         return count;
         }
-       
+
 
         int evalDiagonalRight(){
 
@@ -422,7 +422,6 @@ public class work{
         for(int k = 3; k<6; k++){
             for(int i = 0; i < 4; i++){
                 for(int j = 0; j <4; j++){
-                 //   System.out.println("config: " + configInicial[start-k][j+k] + " i: " + (start-k) + " j: " + (start+k));
                     if(configInicial[k-j][i+j] != '-'){
                         if((configInicial[k-j][i+j] == 'x')){
                             countX++;
@@ -440,6 +439,7 @@ public class work{
         return count;
         }
 
+       
         int evalDiagonalLeft(){
             
             int count = 0;
@@ -494,9 +494,8 @@ public class work{
 
     }
 
-
     
-
+    
 
     public static void main(String Argrs[]){
         
