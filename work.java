@@ -387,7 +387,7 @@ public class work{
         }
 
 
-         int evalColumn(){
+        int evalColumn(){
 
             int count = 0;
             int countX = 0;
