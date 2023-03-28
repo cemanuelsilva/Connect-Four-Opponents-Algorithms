@@ -281,7 +281,7 @@ public class work{
             //diagonais
             char verifyDiagonalRight(){
 
-                for(int i = 3; i < 6; i++){
+                for(int i = 5; i > 3; i--){
                     for(int j = 0; j < 4; j++){
                         if(configInicial[i][j] != '-'){
                             if((configInicial[i][j] == configInicial[i-1][j+1] && configInicial[i][j] == configInicial[i-2][j+2] && configInicial[i][j] == configInicial[i-3][j+3])){
