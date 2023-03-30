@@ -24,7 +24,7 @@ public class work{
                 }
             }
 
-            lastmove = 'O';
+            lastmove = 'o';
             heuristic = 0;
             depth = 0;
             
@@ -45,18 +45,16 @@ public class work{
 
         }
 
-
+        //============CLASS SUPPORT ======================================//
 
         public void printBoard() {
       
         for (int x = 0; x < 6; x++) {
             for (int y = 0; y < 7; y++) {
-                // just a print so it does not make new lines for every char
+                
                 System.out.print(configInicial[x][y] + " ");
             }
-            // new line once one column (board[x][0] - board[x][8]) is printed
-            // note: you proably want to turn around the x and y above since
-            // I guess you want to print rows instead of columns
+            
             System.out.println();
         }
 
@@ -74,7 +72,7 @@ public class work{
             LinkedList<Integer> possible = new LinkedList<>();
 
             for(int j = 0; j < 7; j++){
-                if(configInicial[1][j] == '-'){
+                if(configInicial[0][j] == '-'){
                     possible.add(j+1);
                 }
             }
@@ -124,20 +122,23 @@ public class work{
                 return;   
             }
             else{
-                if(configInicial[1][move] != '-'){
+                if(configInicial[0][move] != '-'){
                     System.out.println("Not possible!");
                     return;
                     
                 }
 
                 else{
-                for(int i = 5; i > 0; i--){
+                for(int i = 5; i > -1; i--){
                         if(configInicial[i][move] != '-'){
                             continue;
                         }
                         else{
                             configInicial[i][move] = lastmove;
                             lastmove = configInicial[i][move];
+
+                            changePlay();
+                            this.depth++;
                             break;
 
                         }
@@ -145,8 +146,6 @@ public class work{
                 }
             }
 
-            changePlay();
-            this.depth++;
 
         }
 
@@ -175,7 +174,10 @@ public class work{
             }
         }
 
+        //==========================================================//
 
+        //============== VERIFY =======================================//
+    
         boolean VerifyDraw(){
             int counter =0;
             for(int i = 0; i<6; i++){
@@ -200,44 +202,44 @@ public class work{
 
             if(verifyColumn() != '-'){
                 if(verifyColumn() == 'x'){
-                    System.out.println("Ganhou: x");
+                    //System.out.println("Ganhou: x");
                     return 'x';
                 }
                 else{
-                    System.out.println("Ganhou: o");
+                    //System.out.println("Ganhou: o");
                     return 'o';
                 }
             }
 
             if(verifyLine() != '-'){
                 if(verifyLine() == 'x'){
-                    System.out.println("Ganhou: x");
+                    //System.out.println("Ganhou: x");
                     return 'x';
                 }
                 else{
-                    System.out.println("Ganhou: o");
+                    //System.out.println("Ganhou: o");
                     return 'o';
                 }
             }
 
             if(verifyDiagonalLeft() != '-'){
                 if(verifyDiagonalLeft() == 'x'){
-                    System.out.println("Ganhou: x");
+                    //System.out.println("Ganhou: x");
                     return 'x';
                 }
                 else{
-                    System.out.println("Ganhou: o");
+                    //System.out.println("Ganhou: o");
                     return 'o';
                 }
             }
 
             if(verifyDiagonalRight() != '-'){
                 if(verifyDiagonalRight() == 'x'){
-                    System.out.println("Ganhou: x");
+                    //System.out.println("Ganhou: x");
                     return 'x';
                 }
                 else{
-                    System.out.println("Ganhou: o");
+                    //System.out.println("Ganhou: o");
                     return 'o';
                 }
             }
@@ -311,7 +313,9 @@ public class work{
             
             return '-';
         }
+        //==========================================================//
     
+        //===================EVALUATION =============================//
 
         int evaluation(){
 
@@ -322,7 +326,7 @@ public class work{
             count += evalDiagonalRight();
             count += evalLines();
             
-            System.out.println(count);
+            //System.out.println(count);
             return count;
         }
         
@@ -467,71 +471,231 @@ public class work{
             return count;
         }
 
+        //==========================================================//
+
+
+        public int FirstMove(Game bestOutcome) {
+            while(bestOutcome.pai != this) {
+                bestOutcome = bestOutcome.pai;
+            }
+            return bestOutcome.lastMovement;
+        }
+
 
     }
 
-    static Game minimaxDecision(Game board){
+    //=========== ALGORITHMS ===============================================//
 
-       int depthMax = 7 + board.depth;
-       board.pai = null;
-
-       LinkedList<Game> descendents = board.MakeDescendents();
-
-       Game bestScore = null;
-
-       for(Game descendentGame : descendents){
-
-        Game temp = maxValue(descendentGame, depthMax);
-
-        if(bestScore == null){
-            bestScore = temp;
-        }
-
-        if(bestScore.heuristic > temp.heuristic){
-            bestScore = temp;
-        }
-        else{
-            bestScore = temp;
-        }
-
-       }
-
-       bestScore.printBoard();
-       return bestScore;
+    public static int MiniMaxComputerMovePlayer1(Game board, char player) {
+        Game bestOutcome = MiniMax_decision(board, player);
+        // bestOutcome.PrintPath();
+        return board.FirstMove(bestOutcome);
     }
 
 
-    static Game maxValue(Game board, int maxDepth){
-
-        int bestScore = Integer.MAX_VALUE;
-
-        if(board.winner() != '-'){
-           return board;
-        }
-
-        LinkedList<Game> possiveis = board.MakeDescendents();
-        Game best = possiveis.pollLast();
-
-        for(Game move : possiveis){
-
-            if(move.heuristic == -512){
-                return move;
+    public static Game MiniMax_decision(Game board, char player) {
+        
+        int depthMax = 10 + board.depth;
+        board.pai = null;
+        LinkedList<Game> descendents = board.MakeDescendents();
+        //n.pai = null
+        Game best = null;
+        for(Game child : descendents) {
+            Game g = MiniMax_value(child, depthMax, player);
+            
+            if(best == null) {
+                best = g;
             }
-
-            Game bestChild = maxValue(move, maxDepth);
-            if(best.heuristic > bestChild.heuristic){
-                best = bestChild;
+            if(player == 'x') {
+                if(best.heuristic > g.heuristic) best = g;
             }
-
+            else {
+                if(best.heuristic < g.heuristic) best = g;
+            }
         }
-
 
         return best;
     }
 
+    static Game MiniMax_value(Game board, int maxDepth, char player) {
+        
+        if(board.depth > maxDepth) return board;
 
+        LinkedList<Game> descendents = board.MakeDescendents();
+
+        if(descendents.size() < 2) return board;
+
+        Game best = descendents.pollLast();
     
-    
+        if(best.winner() != '-') return best;
+        for(Game child : descendents) {
+            
+            if(child.winner() != '-') return child;
+            if(board.lastmove != player) {
+                
+                //MIN
+                Game bestSubtreeChild = MiniMax_value(child, maxDepth, player);
+                if(best.heuristic >= bestSubtreeChild.heuristic) {
+                    best = bestSubtreeChild;
+                }
+            }
+            else {
+
+                //MAX
+                Game bestSubtreeChild = MiniMax_value(child, maxDepth, player);
+                if(best.heuristic <=  bestSubtreeChild.heuristic) {
+                    best = bestSubtreeChild;
+                }
+            }
+        }
+        return best;
+    }
+
+    public static int AlphaBetaComputerMove(Game board,char player) {
+        Game bestOutcome = AlphaBeta_decision(board, player);
+        // bestOutcome.PrintPath();
+        return board.FirstMove(bestOutcome);
+    }
+
+    static Game AlphaBeta_decision(Game board, char playerChar) {
+
+        int depthMax = 10 + board.depth;
+        board.pai = null;
+        LinkedList<Game> descendents = board.MakeDescendents();
+        
+        Game best = null;
+        for(Game child : descendents) {
+            Game g = AlphaBeta_value(child, depthMax, Integer.MIN_VALUE, Integer.MAX_VALUE, playerChar);
+        
+            if(best == null) {
+                best = g;
+            }
+            if(playerChar == 'x') {
+                if(best.heuristic > g.heuristic) best = g;
+            }
+            else {
+                if(best.heuristic < g.heuristic) best = g;
+            }
+        }
+        
+        return best;
+    }
+
+    static Game AlphaBeta_value(Game board, int maxDepth, int alpha, int beta, char playerChar) {
+        
+        if(board.depth > maxDepth) return board;
+
+        LinkedList<Game> descendents = board.MakeDescendents();
+
+        if(descendents.size() < 2) return board;
+
+        Game best = descendents.pollLast();
+        
+        if(best.winner() != '-') return best;
+        for(Game child : descendents) {
+            
+            if(child.winner() != '-') return child;
+            if(board.lastMovement != playerChar) {
+                //min
+                Game bestSubtreeChild = AlphaBeta_value(child, maxDepth, alpha, beta, playerChar);
+                if(best.heuristic >= bestSubtreeChild.heuristic) {
+                    best = bestSubtreeChild;
+                }
+                beta = Math.min(beta, bestSubtreeChild.heuristic);
+                if(beta <= alpha ) {
+                    break;
+                }
+            }
+            else {
+                //max
+                Game bestSubtreeChild = AlphaBeta_value(child, maxDepth, alpha, beta, playerChar);
+                if(best.heuristic <= bestSubtreeChild.heuristic) {
+                    best = bestSubtreeChild;
+                }
+                alpha = Math.max(alpha, bestSubtreeChild.heuristic);
+                if(alpha >= beta) {
+                    break;
+                }
+            }
+        }
+        return best;
+    }
+
+    //==========================================================//
+
+    static void initiateGame(int player1,int player2, int starts){
+        Scanner sc = new Scanner(System.in);
+        Game board = new Game();
+        boolean playerTurn = true;
+        int move;
+        int answer;
+
+        board.printBoard();
+
+        if(starts == 1){
+            playerTurn = true;
+        }
+        else{
+            playerTurn = false;
+        }
+
+        while(board.winner() == '-'){
+
+
+            if(playerTurn){
+                switch(player1){
+                    case 1: 
+                        answer = sc.nextInt();
+                        //board.printBoard();
+                        board.MakeMove(answer);
+                        playerTurn = false;
+                        break;
+                    case 2: 
+                        move = MiniMaxComputerMovePlayer1(board, 'x');
+                        board.MakeMove(move);
+                        //board.printBoard();
+                        playerTurn = false;
+                        break;
+                    case 3:
+                        move = AlphaBetaComputerMove(board, 'x');
+                        board.MakeMove(move);
+                        //board.printBoard();
+                        playerTurn = false;
+                        break;
+                }
+            }
+            else{
+                switch(player2){
+                    case 1: 
+                        answer = sc.nextInt();
+                        board.MakeMove(answer);
+                        //board.printBoard();
+                        playerTurn = true;
+                        break;
+                    case 2: 
+                        move = MiniMaxComputerMovePlayer1(board, 'o');
+                        board.MakeMove(move);
+                        //board.printBoard();
+                        playerTurn = true;
+                        break;
+                    case 3:
+                        move = AlphaBetaComputerMove(board, 'o');
+                        board.MakeMove(move);
+                        //board.printBoard();
+                        playerTurn = true;
+                        break;
+                }
+            }
+            System.out.println("----------------------------------");
+            System.out.println("It's " + board.lastmove + " turn!");
+            board.printBoard();
+
+        }
+
+        System.out.println("\n\n" + board.lastmove + " WON!!");
+
+    }
+
 
     public static void main(String Argrs[]){
         
@@ -539,150 +703,65 @@ public class work{
         
         boolean humanPlay = true;
         boolean pcPlay = true;
+        Scanner sc = new Scanner(System.in);
+        int player1 = 0;
+        int player2 = 0;
+        int answer = 0;
+        int Starts = 0;
 
         //====================//
         
         //==== MENU ====//
 
-        System.out.println("----------");
-        System.out.println("Welcome!");
-        System.out.println("1º - Two Players");
-        System.out.println("2º - Minimax");
-        System.out.println("3º - Alpha");
-        System.out.println("4º - MonteCarlo");
-        System.out.println("----------");
+        while(answer < 1 || answer > 4){
+            System.out.println("----------");
+            System.out.println("Welcome!");
+            System.out.println("Player 1 selection: ");
+            System.out.println("1º - Human");
+            System.out.println("2º - Minimax");
+            System.out.println("3º - Alpha");
+            System.out.println("4º - MonteCarlo");
+            System.out.println("----------");
+            answer = sc.nextInt();
+        }
+
+        player1 = answer;
+        answer = 0;
         
-        Scanner sc = new Scanner(System.in);
-        int answer = sc.nextInt();
+
         
+        while(answer < 1 || answer > 4){
+            System.out.println("----------");
+            System.out.println("Player 2 selection: ");
+            System.out.println("1º - Human");
+            System.out.println("2º - Minimax");
+            System.out.println("3º - Alpha");
+            System.out.println("4º - MonteCarlo");
+            System.out.println("----------");
+            answer = sc.nextInt();
+        }
+
+        player2 = answer;
+        answer = 0;
+        
+
+        while(answer < 1 || answer > 3){
+            System.out.println("----------");
+            System.out.println("Who Starts? ");
+            System.out.println("1º - Player 1");
+            System.out.println("2º - Player 2");
+            answer = sc.nextInt();
+        }
+
+        Starts = answer;
         System.out.println("Have fun!");
         System.out.println("----------\n");
 
         //==================//
+        
 
-        switch(answer){
-            case 1:
-                System.out.println("----------");
-                System.out.println("1º- Ir em primeiro");
-                System.out.println("2º- Ir em segundo");
-                System.out.println("-----------");
+        initiateGame(player1, player2, Starts);
 
-                Game boas = new Game();
-                int escolha = 0;
-
-                while(escolha != 1 && escolha != 2){
-                escolha = sc.nextInt();
-                if((escolha != 1 || escolha != 2)){
-                    System.out.println("--------------------------");
-                    System.out.println("Insira uma opção correta");
-                    System.out.println("--------------------------");
-                    }
-                }
-
-                boas.whoStarts(escolha);
-
-                System.out.println("--------");
-                System.out.println("START!");
-                System.out.println("--------\n");
-
-                while(boas.winner() == '-'){
-                    
-
-                    System.out.println("It's " + boas.lastmove + " turn!");
-                    System.out.println("Make a move by choosing your coordinates to play (1 to 7).\n");
-                    System.out.println("Possible moves: " + boas.PossibleMoves());  
-                    System.out.println("\n");
-                    
-
-                    boas.printBoard();
-                    boas.evaluation();
-                    int play = sc.nextInt();
-                    boas.MakeMove(play);
-                    //boas.MakeDescendents();
-                    System.out.println();
-                    System.out.println("-----------------------");
-                }
-                boas.printBoard();
-                break;
-
-            case 2:
-
-                // ======== OPTIONS ======== // 
-
-                System.out.println("----------");
-                System.out.println("1º- Ir em primeiro");
-                System.out.println("2º- Ir em segundo");
-                System.out.println("-----------");
-
-                Game gg = new Game();
-                int escolha1 = 0;
-
-                while(escolha1 != 1 && escolha1 != 2){
-                    escolha1 = sc.nextInt();
-
-                    if((escolha1 != 1 || escolha1 != 2)){
-                        System.out.println("--------------------------");
-                        System.out.println("Insira uma opção correta");
-                        System.out.println("--------------------------");
-                        }
-                    }
-
-                    if(gg.whoStarts(escolha1) == true){
-                        humanPlay = true;
-                        pcPlay = false;
-                    }
-                    else{
-                        humanPlay = false;
-                        pcPlay = true;
-                    }
-
-                    System.out.println("--------");
-                    System.out.println("START!");
-                    System.out.println("--------\n");
-
-                // =================================//
-                //========== GAME START ============//
-
-                while(gg.winner() == '-'){
-                    
-                    if(humanPlay == true){
-
-                        //System.out.println("It's " + boas.changePlay() + " turn!");
-                        System.out.println("Make a move by choosing your coordinates to play (1 to 7).\n");
-                        System.out.println("Possible moves: " + gg.PossibleMoves());  
-                        System.out.println("\n");
-                        
-                        int play = sc.nextInt();
-                        gg.MakeMove(play);
-                        //gg.printBoard();
-                        humanPlay = false;
-                        pcPlay = true;
-                    }
-                    else{
-
-                        System.out.println("tou aqui");
-                        minimaxDecision(gg);
-                        humanPlay = true;
-                        pcPlay = false;
-                        
-                    }
-                    gg.printBoard();
-                    
-                
-                    System.out.println();
-                    System.out.println("-----------------------");
-                }
-                gg.printBoard();
-                break;
-
-                // =================================//
-            case 3:
-                break;
-            case 4:
-                break;
-            
-                
-        }
-
+        
         }
     }
