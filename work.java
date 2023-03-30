@@ -495,7 +495,7 @@ public class work{
 
     public static Game MiniMax_decision(Game board, char player) {
         
-        int depthMax = 10 + board.depth;
+        int depthMax = 14 + board.depth;
         board.pai = null;
         LinkedList<Game> descendents = board.MakeDescendents();
         //n.pai = null
@@ -559,7 +559,7 @@ public class work{
 
     static Game AlphaBeta_decision(Game board, char playerChar) {
 
-        int depthMax = 10 + board.depth;
+        int depthMax = 14 + board.depth;
         board.pai = null;
         LinkedList<Game> descendents = board.MakeDescendents();
         
@@ -686,6 +686,7 @@ public class work{
                         break;
                 }
             }
+            
             System.out.println("----------------------------------");
             System.out.println("It's " + board.lastmove + " turn!");
             board.printBoard();
