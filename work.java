@@ -1,4 +1,5 @@
 import java.util.*;
+import java.lang.Math;
 
 public class work{
 
@@ -40,6 +41,7 @@ public class work{
             }
             this.lastmove = lastmove;
             this.depth = depth;
+            this.heuristic = evaluation();
 
         }
 
@@ -99,7 +101,7 @@ public class work{
                 novo.MakeMove(move);
                 novo.depth++;
                 novo.printBoard();
-                System.out.println("---Verify--");
+                //System.out.println("---Verify--");
                 tabuleiros.add(novo);
                 
             }
@@ -330,7 +332,7 @@ public class work{
                 int count = 0;
 
                 if(countY == 4){
-                    count= 512;
+                    count= -512;
                     }
                 if(countX == 4){
                     count= 512;
@@ -466,32 +468,71 @@ public class work{
             return count;
         }
 
-        /*
-        int minimax(Game board, depth, isMaximizing){
-            char result = winner();
-            if(result != '-'){
-                
+
+    }
+
+    static void minimaxDecision(Game board){
+
+       int bestScore = maxValue(board);
+
+       board.MakeMove();
+    }
+
+
+    static int maxValue(Game board){
+
+        int bestScore = Integer.MAX_VALUE;
+        int move_y = 0;
+
+        if(board.winner() != '-'){
+            if(board.heuristic == 512){
+                return board.heuristic;
+            }
+            else{
+                return board.heuristic;
             }
         }
 
-        int bestmove(){
+        LinkedList<Game> possiveis = board.MakeDescendents();
+        for(Game move : possiveis){
 
-            int bestScore = -1000;
-            int bestMove;
-            int score;
-
-            LinkedList<Game> tabuleiros = MakeDescendents();
-
-            for(Game tab : tabuleiros){
-                score = minimax(tab);
+            if(move.evaluation() > bestScore){
+                bestScore = move.evaluation();
+                move_y = 0;
             }
-
-
-            return 0;
-
         }
-        */
 
+
+        return move_y;
+    }
+
+
+    static int minValue(Game board){
+
+        int bestScore = Integer.MIN_VALUE;
+        int move_y = 0;
+
+        if(board.winner() != '-'){
+            if(board.heuristic == 512){
+                return board.heuristic;
+            }
+            else{
+                return board.heuristic;
+            }
+        }
+
+        LinkedList<Game> possiveis = board.MakeDescendents();
+
+        for(Game move : possiveis){
+
+            if(move.evaluation() < bestScore){
+                bestScore = move.evaluation();
+                move_y = 4;
+            }
+        }
+
+
+        return bestScore;
     }
 
     
@@ -560,6 +601,60 @@ public class work{
                 break;
 
             case 2:
+
+                boolean humanPlay = true;
+
+                System.out.println("----------");
+                System.out.println("1º- Ir em primeiro");
+                System.out.println("2º- Ir em segundo");
+                System.out.println("-----------");
+
+                Game gg = new Game();
+                int a = 0;
+
+                while(a != 1 && a != 2){
+                a = sc.nextInt();
+                if((a != 1 || a != 2)){
+                    System.out.println("--------------------------");
+                    System.out.println("Insira uma opção correta");
+                    System.out.println("--------------------------");
+                    }
+                }
+
+                gg.whoStarts(a);
+
+                System.out.println("--------");
+                System.out.println("START!");
+                System.out.println("--------\n");
+
+                while(gg.winner() == '-'){
+                    
+
+                    //System.out.println("It's " + boas.changePlay() + " turn!");
+                    System.out.println("Make a move by choosing your coordinates to play (1 to 7).\n");
+                    System.out.println("Possible moves: " + gg.PossibleMoves());  
+                    System.out.println("\n");
+                    
+
+                    gg.printBoard();
+                    //boas.evaluation();
+
+                    if(humanPlay = true){
+
+                        System.out.println("bot");
+                        minimaxDecision(gg);
+                        humanPlay = true;
+                    }
+                    else{
+                    int play = sc.nextInt();
+                    gg.MakeMove(play);
+                    humanPlay = false;
+                    }
+                    //boas.MakeDescendents();
+                    System.out.println();
+                    System.out.println("-----------------------");
+                }
+                gg.printBoard();
                 break;
             case 3:
                 break;
