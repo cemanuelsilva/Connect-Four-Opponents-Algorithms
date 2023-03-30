@@ -704,10 +704,10 @@ public class work{
         boolean humanPlay = true;
         boolean pcPlay = true;
         Scanner sc = new Scanner(System.in);
-        int player1 = 0;
-        int player2 = 0;
+        int player1;
+        int player2;
         int answer = 0;
-        int Starts = 0;
+        int Starts;
 
         //====================//
         
@@ -758,7 +758,7 @@ public class work{
         System.out.println("----------\n");
 
         //==================//
-        
+
 
         initiateGame(player1, player2, Starts);
 
