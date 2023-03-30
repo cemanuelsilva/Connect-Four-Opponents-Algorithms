@@ -164,15 +164,17 @@ public class work{
 
         //pc_play()
 
-        void whoStarts(int escolha){
+        boolean whoStarts(int escolha){
 
             if(escolha==1){
                 lastmove='x';
                 //human
+                return true;
             }
             else{
                 lastmove='o';
                 //pc
+                return false;
             }
         }
 
@@ -475,7 +477,7 @@ public class work{
 
        int bestScore = maxValue(board);
 
-       board.MakeMove();
+       //board.MakeMove();
     }
 
 
@@ -540,7 +542,15 @@ public class work{
 
     public static void main(String Argrs[]){
         
-    
+        //==== VARIAVEIS ====//
+        
+        boolean humanPlay = true;
+        boolean pcPlay = true;
+
+        //====================//
+        
+        //==== MENU ====//
+
         System.out.println("----------");
         System.out.println("Welcome!");
         System.out.println("1º - Two Players");
@@ -548,12 +558,14 @@ public class work{
         System.out.println("3º - Alpha");
         System.out.println("4º - MonteCarlo");
         System.out.println("----------");
-
+        
         Scanner sc = new Scanner(System.in);
         int answer = sc.nextInt();
         
         System.out.println("Have fun!");
         System.out.println("----------\n");
+
+        //==================//
 
         switch(answer){
             case 1:
@@ -602,7 +614,7 @@ public class work{
 
             case 2:
 
-                boolean humanPlay = true;
+                // ======== OPTIONS ======== // 
 
                 System.out.println("----------");
                 System.out.println("1º- Ir em primeiro");
@@ -610,52 +622,66 @@ public class work{
                 System.out.println("-----------");
 
                 Game gg = new Game();
-                int a = 0;
+                int escolha1 = 0;
 
-                while(a != 1 && a != 2){
-                a = sc.nextInt();
-                if((a != 1 || a != 2)){
-                    System.out.println("--------------------------");
-                    System.out.println("Insira uma opção correta");
-                    System.out.println("--------------------------");
+                while(escolha1 != 1 && escolha1 != 2){
+                    escolha1 = sc.nextInt();
+
+                    if((escolha1 != 1 || escolha1 != 2)){
+                        System.out.println("--------------------------");
+                        System.out.println("Insira uma opção correta");
+                        System.out.println("--------------------------");
+                        }
                     }
-                }
 
-                gg.whoStarts(a);
+                    if(gg.whoStarts(escolha1) == true){
+                        humanPlay = true;
+                        pcPlay = false;
+                    }
+                    else{
+                        humanPlay = false;
+                        pcPlay = true;
+                    }
 
-                System.out.println("--------");
-                System.out.println("START!");
-                System.out.println("--------\n");
+                    System.out.println("--------");
+                    System.out.println("START!");
+                    System.out.println("--------\n");
+
+                // =================================//
+                //========== GAME START ============//
 
                 while(gg.winner() == '-'){
                     
+                    if(humanPlay == true){
 
-                    //System.out.println("It's " + boas.changePlay() + " turn!");
-                    System.out.println("Make a move by choosing your coordinates to play (1 to 7).\n");
-                    System.out.println("Possible moves: " + gg.PossibleMoves());  
-                    System.out.println("\n");
-                    
-
-                    gg.printBoard();
-                    //boas.evaluation();
-
-                    if(humanPlay = true){
-
-                        System.out.println("bot");
-                        minimaxDecision(gg);
-                        humanPlay = true;
+                        //System.out.println("It's " + boas.changePlay() + " turn!");
+                        System.out.println("Make a move by choosing your coordinates to play (1 to 7).\n");
+                        System.out.println("Possible moves: " + gg.PossibleMoves());  
+                        System.out.println("\n");
+                        
+                        int play = sc.nextInt();
+                        gg.MakeMove(play);
+                        humanPlay = false;
+                        pcPlay = true;
+                        gg.printBoard();
                     }
                     else{
-                    int play = sc.nextInt();
-                    gg.MakeMove(play);
-                    humanPlay = false;
+
+                        //minimax
+                        humanPlay = true;
+                        pcPlay = false;
+                        gg.printBoard();
+
                     }
-                    //boas.MakeDescendents();
+
+                
                     System.out.println();
                     System.out.println("-----------------------");
                 }
                 gg.printBoard();
                 break;
+
+                // =================================//
             case 3:
                 break;
             case 4:
