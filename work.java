@@ -24,7 +24,7 @@ public class work{
                 }
             }
 
-            lastmove = 'x';
+            lastmove = 'O';
             heuristic = 0;
             depth = 0;
             
@@ -100,7 +100,7 @@ public class work{
                 novo.pai = this;
                 novo.MakeMove(move);
                 novo.depth++;
-                novo.printBoard();
+                //novo.printBoard();
                 //System.out.println("---Verify--");
                 tabuleiros.add(novo);
                 
@@ -136,7 +136,7 @@ public class work{
                             continue;
                         }
                         else{
-                            configInicial[i][move] = changePlay();
+                            configInicial[i][move] = lastmove;
                             lastmove = configInicial[i][move];
                             break;
 
@@ -144,26 +144,23 @@ public class work{
                     }
                 }
             }
-               
-            //evaluation();
+
+            changePlay();
             this.depth++;
 
         }
 
-        char changePlay(){
+        void changePlay(){
             if (lastmove == 'x'){
-                return 'o';
+                 lastmove = 'o';
             }
             else{
-                return 'x';
+                lastmove= 'x';
             }
             
         }
 
-        //human_play()
-
-        //pc_play()
-
+    
         boolean whoStarts(int escolha){
 
             if(escolha==1){
@@ -473,69 +470,65 @@ public class work{
 
     }
 
-    static void minimaxDecision(Game board){
+    static Game minimaxDecision(Game board){
 
-       int bestScore = maxValue(board);
+       int depthMax = 7 + board.depth;
+       board.pai = null;
 
-       //board.MakeMove();
+       LinkedList<Game> descendents = board.MakeDescendents();
+
+       Game bestScore = null;
+
+       for(Game descendentGame : descendents){
+
+        Game temp = maxValue(descendentGame, depthMax);
+
+        if(bestScore == null){
+            bestScore = temp;
+        }
+
+        if(bestScore.heuristic > temp.heuristic){
+            bestScore = temp;
+        }
+        else{
+            bestScore = temp;
+        }
+
+       }
+
+       bestScore.printBoard();
+       return bestScore;
     }
 
 
-    static int maxValue(Game board){
+    static Game maxValue(Game board, int maxDepth){
 
         int bestScore = Integer.MAX_VALUE;
-        int move_y = 0;
 
         if(board.winner() != '-'){
-            if(board.heuristic == 512){
-                return board.heuristic;
-            }
-            else{
-                return board.heuristic;
-            }
+           return board;
         }
 
         LinkedList<Game> possiveis = board.MakeDescendents();
-        for(Game move : possiveis){
-
-            if(move.evaluation() > bestScore){
-                bestScore = move.evaluation();
-                move_y = 0;
-            }
-        }
-
-
-        return move_y;
-    }
-
-
-    static int minValue(Game board){
-
-        int bestScore = Integer.MIN_VALUE;
-        int move_y = 0;
-
-        if(board.winner() != '-'){
-            if(board.heuristic == 512){
-                return board.heuristic;
-            }
-            else{
-                return board.heuristic;
-            }
-        }
-
-        LinkedList<Game> possiveis = board.MakeDescendents();
+        Game best = possiveis.pollLast();
 
         for(Game move : possiveis){
 
-            if(move.evaluation() < bestScore){
-                bestScore = move.evaluation();
-                move_y = 4;
+            if(move.heuristic == -512){
+                return move;
             }
+
+            Game bestChild = maxValue(move, maxDepth);
+            if(best.heuristic > bestChild.heuristic){
+                best = bestChild;
+            }
+
         }
 
 
-        return bestScore;
+        return best;
     }
+
 
     
     
@@ -595,7 +588,7 @@ public class work{
                 while(boas.winner() == '-'){
                     
 
-                    System.out.println("It's " + boas.changePlay() + " turn!");
+                    System.out.println("It's " + boas.lastmove + " turn!");
                     System.out.println("Make a move by choosing your coordinates to play (1 to 7).\n");
                     System.out.println("Possible moves: " + boas.PossibleMoves());  
                     System.out.println("\n");
@@ -661,19 +654,20 @@ public class work{
                         
                         int play = sc.nextInt();
                         gg.MakeMove(play);
+                        //gg.printBoard();
                         humanPlay = false;
                         pcPlay = true;
-                        gg.printBoard();
                     }
                     else{
 
-                        //minimax
+                        System.out.println("tou aqui");
+                        minimaxDecision(gg);
                         humanPlay = true;
                         pcPlay = false;
-                        gg.printBoard();
-
+                        
                     }
-
+                    gg.printBoard();
+                    
                 
                     System.out.println();
                     System.out.println("-----------------------");
