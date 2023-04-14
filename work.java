@@ -491,11 +491,11 @@ public class work{
         // bestOutcome.PrintPath();
         return board.FirstMove(bestOutcome);
     }
-
-
+    
+    
     public static Game MiniMax_decision(Game board, char player) {
         
-        int depthMax = 14 + board.depth;
+        int depthMax = 15 + board.depth;
         board.pai = null;
         LinkedList<Game> descendents = board.MakeDescendents();
         //n.pai = null
@@ -513,188 +513,159 @@ public class work{
                 if(best.heuristic < g.heuristic) best = g;
             }
         }
-
+    
         return best;
     }
-
+    
     static Game MiniMax_value(Game board, int maxDepth, char player) {
         
-        if(board.depth > maxDepth) return board;
-
-        LinkedList<Game> descendents = board.MakeDescendents();
-
-        if(descendents.size() < 2) return board;
-
-        Game best = descendents.pollLast();
+        if(board.depth > maxDepth || board.winner() != '-') {
+            return board;
+        }
     
-        if(best.winner() != '-') return best;
+        LinkedList<Game> descendents = board.MakeDescendents();
+    
+        if(descendents.size() == 0) {
+            return board;
+        }
+    
+        Game best = null;
+    
         for(Game child : descendents) {
             
-            if(child.winner() != '-') return child;
-            if(board.lastmove != player) {
-                
-                //MIN
-                Game bestSubtreeChild = MiniMax_value(child, maxDepth, player);
-                if(best.heuristic >= bestSubtreeChild.heuristic) {
-                    best = bestSubtreeChild;
-                }
-            }
-            else {
-
-                //MAX
-                Game bestSubtreeChild = MiniMax_value(child, maxDepth, player);
-                if(best.heuristic <=  bestSubtreeChild.heuristic) {
-                    best = bestSubtreeChild;
-                }
+            Game subtreeChild = MiniMax_value(child, maxDepth, player);
+    
+            if(best == null || (player == 'x' && best.heuristic > subtreeChild.heuristic) 
+                              || (player == 'o' && best.heuristic < subtreeChild.heuristic)) {
+                best = subtreeChild;
             }
         }
+    
+        
         return best;
     }
 
-    public static int AlphaBetaComputerMove(Game board,char player) {
+    public static int AlphaBetaComputerMove(Game board, char player) {
         Game bestOutcome = AlphaBeta_decision(board, player);
-        // bestOutcome.PrintPath();
         return board.FirstMove(bestOutcome);
     }
-
+    
     static Game AlphaBeta_decision(Game board, char playerChar) {
-
-        int depthMax = 14 + board.depth;
-        board.pai = null;
+        int depthMax = 15 + board.depth;
         LinkedList<Game> descendents = board.MakeDescendents();
-        
         Game best = null;
-        for(Game child : descendents) {
+        for (Game child : descendents) {
             Game g = AlphaBeta_value(child, depthMax, Integer.MIN_VALUE, Integer.MAX_VALUE, playerChar);
-        
-            if(best == null) {
+            if (best == null) {
+                best = g;
+            } else if (playerChar == 'x' && best.heuristic > g.heuristic) {
+                best = g;
+            } else if (playerChar == 'o' && best.heuristic < g.heuristic) {
                 best = g;
             }
-            if(playerChar == 'x') {
-                if(best.heuristic > g.heuristic) best = g;
-            }
-            else {
-                if(best.heuristic < g.heuristic) best = g;
-            }
         }
-        
         return best;
     }
-
+    
     static Game AlphaBeta_value(Game board, int maxDepth, int alpha, int beta, char playerChar) {
-        
-        if(board.depth > maxDepth) return board;
-
+        if (board.depth >= maxDepth || board.winner() != '-') {
+            return board;
+        }
         LinkedList<Game> descendents = board.MakeDescendents();
-
-        if(descendents.size() < 2) return board;
-
-        Game best = descendents.pollLast();
-        
-        if(best.winner() != '-') return best;
-        for(Game child : descendents) {
-            
-            if(child.winner() != '-') return child;
-            if(board.lastMovement != playerChar) {
-                //min
-                Game bestSubtreeChild = AlphaBeta_value(child, maxDepth, alpha, beta, playerChar);
-                if(best.heuristic >= bestSubtreeChild.heuristic) {
-                    best = bestSubtreeChild;
-                }
+        if (descendents.size() == 0) {
+            return board;
+        }
+        Game best = null;
+        for (Game child : descendents) {
+            Game bestSubtreeChild = AlphaBeta_value(child, maxDepth, alpha, beta, playerChar);
+            if (best == null || (playerChar == 'x' && best.heuristic > bestSubtreeChild.heuristic) || (playerChar == 'o' && best.heuristic < bestSubtreeChild.heuristic)) {
+                best = bestSubtreeChild;
+            }
+            if (board.lastMovement != playerChar) { // min node
                 beta = Math.min(beta, bestSubtreeChild.heuristic);
-                if(beta <= alpha ) {
+                if (beta <= alpha) {
                     break;
                 }
-            }
-            else {
-                //max
-                Game bestSubtreeChild = AlphaBeta_value(child, maxDepth, alpha, beta, playerChar);
-                if(best.heuristic <= bestSubtreeChild.heuristic) {
-                    best = bestSubtreeChild;
-                }
+            } else { // max node
                 alpha = Math.max(alpha, bestSubtreeChild.heuristic);
-                if(alpha >= beta) {
+                if (alpha >= beta) {
                     break;
                 }
             }
         }
         return best;
     }
+
+    
 
     //==========================================================//
 
-    static void initiateGame(int player1,int player2, int starts){
+    static void initiateGame(int player1, int player2, int starts) {
         Scanner sc = new Scanner(System.in);
         Game board = new Game();
         boolean playerTurn = true;
         int move;
         int answer;
-
+    
         board.printBoard();
-
-        if(starts == 1){
+    
+        if (starts == 1) {
             playerTurn = true;
-        }
-        else{
+        } else {
             playerTurn = false;
         }
-
-        while(board.winner() == '-'){
-
-
-            if(playerTurn){
-                switch(player1){
-                    case 1: 
+    
+        while (board.winner() == '-') {
+    
+            if (playerTurn) {
+                switch (player1) {
+                    case 1:
                         answer = sc.nextInt();
-                        //board.printBoard();
                         board.MakeMove(answer);
                         playerTurn = false;
                         break;
-                    case 2: 
+                    case 2:
                         move = MiniMaxComputerMovePlayer1(board, 'x');
                         board.MakeMove(move);
-                        //board.printBoard();
                         playerTurn = false;
                         break;
                     case 3:
                         move = AlphaBetaComputerMove(board, 'x');
                         board.MakeMove(move);
-                        //board.printBoard();
                         playerTurn = false;
                         break;
                 }
-            }
-            else{
-                switch(player2){
-                    case 1: 
+            } else {
+                switch (player2) {
+                    case 1:
                         answer = sc.nextInt();
                         board.MakeMove(answer);
-                        //board.printBoard();
                         playerTurn = true;
                         break;
-                    case 2: 
+                    case 2:
                         move = MiniMaxComputerMovePlayer1(board, 'o');
                         board.MakeMove(move);
-                        //board.printBoard();
                         playerTurn = true;
                         break;
                     case 3:
                         move = AlphaBetaComputerMove(board, 'o');
                         board.MakeMove(move);
-                        //board.printBoard();
                         playerTurn = true;
                         break;
                 }
             }
-            
+    
             System.out.println("----------------------------------");
             System.out.println("It's " + board.lastmove + " turn!");
+            //int heuristica = board.heuristic();
+            //System.out.println("Heuristic: " + heuristica);
             board.printBoard();
-
+            //System.out.println("Nodes Pruned: " + board.prunedNodes);
+    
         }
-
+    
         System.out.println("\n\n" + board.lastmove + " WON!!");
-
+    
     }
 
 
