@@ -179,21 +179,14 @@ public class work{
         //============== VERIFY =======================================//
     
         boolean VerifyDraw(){
-            int counter =0;
-            for(int i = 0; i<6; i++){
-                for(int j = 0; j<7; i++){
-                    if(configInicial[i][j] != '-'){
-                        counter++;
+            for (int i = 0; i < 6; i++) {
+                for (int j = 0; j < 7; j++) {
+                    if (configInicial[i][j] == '-') {
+                        return false;
                     }
                 }
             }
-            if(counter == 42){
-                System.out.println("It's a draw match!");
-                System.out.println("Please, play again.");
-                return true;
-            }else{
-                return false;
-            }
+            return true;
         }
         
         
@@ -243,6 +236,8 @@ public class work{
                     return 'o';
                 }
             }
+
+            
 
             return '-';
         }
@@ -616,7 +611,12 @@ public class work{
         }
     
         while (board.winner() == '-') {
-    
+            
+            if(board.VerifyDraw() == true){
+                System.out.println("Draw!");
+                return;
+            }
+
             if (playerTurn) {
                 switch (player1) {
                     case 1:
@@ -654,7 +654,8 @@ public class work{
                         break;
                 }
             }
-    
+            
+
             System.out.println("----------------------------------");
             System.out.println("It's " + board.lastmove + " turn!");
             //int heuristica = board.heuristic();
@@ -663,8 +664,13 @@ public class work{
             //System.out.println("Nodes Pruned: " + board.prunedNodes);
     
         }
-    
-        System.out.println("\n\n" + board.lastmove + " WON!!");
+        
+        if(board.lastmove == 'x'){
+        System.out.println("\n\n Player 'O' WON!!");
+        }
+        else{
+            System.out.println("\n\n Player 'X' WON!!");
+        }
     
     }
 
@@ -731,9 +737,14 @@ public class work{
 
         //==================//
 
-
+        long startTime = System.currentTimeMillis();
+        
         initiateGame(player1, player2, Starts);
-
+        
+        long endTime = System.currentTimeMillis();
+        long elapsedTime = endTime - startTime;
+        double elapsedSeconds = (double)elapsedTime / 1000.0;
+        System.out.println("Elapsed time: " + elapsedSeconds + " seconds");
         
         }
     }
