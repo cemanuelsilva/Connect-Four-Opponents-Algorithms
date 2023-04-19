@@ -3,6 +3,10 @@ import java.lang.Math;
 
 public class work{
 
+    static int countPruning = 0;
+    static int countAlphaBeta = 0;
+    static int countMinimax = 0;
+
     static class Game{
 
         Game pai;
@@ -24,7 +28,7 @@ public class work{
                 }
             }
 
-            lastmove = 'o';
+            lastmove = 'x';
             heuristic = 0;
             depth = 0;
             
@@ -159,20 +163,6 @@ public class work{
             
         }
 
-    
-        boolean whoStarts(int escolha){
-
-            if(escolha==1){
-                lastmove='x';
-                //human
-                return true;
-            }
-            else{
-                lastmove='o';
-                //pc
-                return false;
-            }
-        }
 
         //==========================================================//
 
@@ -501,12 +491,12 @@ public class work{
             if(best == null) {
                 best = g;
             }
-            if(player == 'x') {
-                if(best.heuristic > g.heuristic) best = g;
-            }
-            else {
-                if(best.heuristic < g.heuristic) best = g;
-            }
+             else if (player == 'x' && best.heuristic > g.heuristic) {
+            best = g;
+            } else if (player == 'o' && best.heuristic < g.heuristic) {
+            best = g;
+        }
+    
         }
     
         return best;
@@ -514,6 +504,8 @@ public class work{
     
     static Game MiniMax_value(Game board, int maxDepth, char player) {
         
+        countMinimax++;
+
         if(board.depth > maxDepth || board.winner() != '-') {
             return board;
         }
@@ -546,7 +538,7 @@ public class work{
     }
     
     static Game AlphaBeta_decision(Game board, char playerChar) {
-        int depthMax = 15 + board.depth;
+        int depthMax = 17 + board.depth;
         LinkedList<Game> descendents = board.MakeDescendents();
         Game best = null;
         for (Game child : descendents) {
@@ -563,6 +555,9 @@ public class work{
     }
     
     static Game AlphaBeta_value(Game board, int maxDepth, int alpha, int beta, char playerChar) {
+        
+        countAlphaBeta++;
+
         if (board.depth >= maxDepth || board.winner() != '-') {
             return board;
         }
@@ -571,20 +566,32 @@ public class work{
             return board;
         }
         Game best = null;
+
         for (Game child : descendents) {
-            Game bestSubtreeChild = AlphaBeta_value(child, maxDepth, alpha, beta, playerChar);
-            if (best == null || (playerChar == 'x' && best.heuristic > bestSubtreeChild.heuristic) || (playerChar == 'o' && best.heuristic < bestSubtreeChild.heuristic)) {
-                best = bestSubtreeChild;
-            }
+
+            
             if (board.lastMovement != playerChar) { // min node
+                
+                Game bestSubtreeChild = AlphaBeta_value(child, maxDepth, alpha, beta, playerChar);
+                if (best == null || (playerChar == 'x' && best.heuristic > bestSubtreeChild.heuristic) || (playerChar == 'o' && best.heuristic < bestSubtreeChild.heuristic)) {
+                    best = bestSubtreeChild;
+                }
+
                 beta = Math.min(beta, bestSubtreeChild.heuristic);
-                if (beta <= alpha) {
-                    break;
+                if (beta >= alpha) {
+                    countPruning++;
+                    return best;
                 }
             } else { // max node
+                Game bestSubtreeChild = AlphaBeta_value(child, maxDepth, alpha, beta, playerChar);
+                if (best == null || (playerChar == 'x' && best.heuristic > bestSubtreeChild.heuristic) || (playerChar == 'o' && best.heuristic < bestSubtreeChild.heuristic)) {
+                    best = bestSubtreeChild;
+                }
+
                 alpha = Math.max(alpha, bestSubtreeChild.heuristic);
-                if (alpha >= beta) {
-                    break;
+                if (alpha <= beta) {
+                    countPruning++;
+                    return best;
                 }
             }
         }
@@ -601,19 +608,24 @@ public class work{
         boolean playerTurn = true;
         int move;
         int answer;
+        char boardInfo, boardInfo2;
     
         board.printBoard();
     
         if (starts == 1) {
             playerTurn = true;
+            boardInfo = 'o';
+            boardInfo2 = 'x';
         } else {
             playerTurn = false;
+            boardInfo = 'x';
+            boardInfo2 = 'o';
         }
-    
+        
         while (board.winner() == '-') {
             
             if(board.VerifyDraw() == true){
-                System.out.println("Draw!");
+                System.out.println("\n\nDRAW!");
                 return;
             }
 
@@ -621,16 +633,21 @@ public class work{
                 switch (player1) {
                     case 1:
                         answer = sc.nextInt();
+                        while(answer < 1 || answer > 7){
+                            System.out.println("Please select a number between 1-7");
+                            board.printBoard();
+                            answer = sc.nextInt();
+                        }
                         board.MakeMove(answer);
                         playerTurn = false;
                         break;
                     case 2:
-                        move = MiniMaxComputerMovePlayer1(board, 'x');
+                        move = MiniMaxComputerMovePlayer1(board, boardInfo);
                         board.MakeMove(move);
                         playerTurn = false;
                         break;
                     case 3:
-                        move = AlphaBetaComputerMove(board, 'x');
+                        move = AlphaBetaComputerMove(board, boardInfo);
                         board.MakeMove(move);
                         playerTurn = false;
                         break;
@@ -639,18 +656,23 @@ public class work{
                 switch (player2) {
                     case 1:
                         answer = sc.nextInt();
-                        board.MakeMove(answer);
+                        while(answer < 1 || answer > 7){
+                        System.out.println("Please select a number between 1-7");
+                        board.printBoard();
+                        answer = sc.nextInt();
+                        }
                         playerTurn = true;
                         break;
                     case 2:
-                        move = MiniMaxComputerMovePlayer1(board, 'o');
+                        move = MiniMaxComputerMovePlayer1(board, boardInfo2);
                         board.MakeMove(move);
                         playerTurn = true;
                         break;
                     case 3:
-                        move = AlphaBetaComputerMove(board, 'o');
+                        move = AlphaBetaComputerMove(board, boardInfo2);
                         board.MakeMove(move);
                         playerTurn = true;
+                        System.out.println("Entrei");
                         break;
                 }
             }
@@ -745,6 +767,9 @@ public class work{
         long elapsedTime = endTime - startTime;
         double elapsedSeconds = (double)elapsedTime / 1000.0;
         System.out.println("Elapsed time: " + elapsedSeconds + " seconds");
+        System.out.println("Pruning: " + countPruning);
+        System.out.println("Minimax nodes: " + countMinimax);
+        System.out.println("AlphaBeta nodes: " + countAlphaBeta);
         
         }
     }
