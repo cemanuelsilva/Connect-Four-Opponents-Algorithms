@@ -471,22 +471,22 @@ public class work{
 
     //=========== ALGORITHMS ===============================================//
 
-    public static int MiniMaxComputerMovePlayer1(Game board, char player) {
-        Game bestOutcome = MiniMax_decision(board, player);
+    public static int MiniMaxComputerMovePlayer1(Game board, char player, int maxDepth) {
+        Game bestOutcome = MiniMax_decision(board, player, maxDepth);
         // bestOutcome.PrintPath();
         return board.FirstMove(bestOutcome);
     }
     
     
-    public static Game MiniMax_decision(Game board, char player) {
+    public static Game MiniMax_decision(Game board, char player, int maxDepth) {
         
-        int depthMax = 15 + board.depth;
+        maxDepth = maxDepth + board.depth;
         board.pai = null;
         LinkedList<Game> descendents = board.MakeDescendents();
         //n.pai = null
         Game best = null;
         for(Game child : descendents) {
-            Game g = MiniMax_value(child, depthMax, player);
+            Game g = MiniMax_value(child, maxDepth, player);
             
             if(best == null) {
                 best = g;
@@ -520,29 +520,37 @@ public class work{
     
         for(Game child : descendents) {
             
-            Game subtreeChild = MiniMax_value(child, maxDepth, player);
-    
-            if(best == null || (player == 'x' && best.heuristic > subtreeChild.heuristic) 
-                              || (player == 'o' && best.heuristic < subtreeChild.heuristic)) {
-                best = subtreeChild;
+            if (board.lastmove == player) { // min node
+                
+                Game bestSubtreeChild = MiniMax_value(child, maxDepth,player);
+                if (best == null || (player == 'x' && best.heuristic > bestSubtreeChild.heuristic) || (player == 'o' && best.heuristic < bestSubtreeChild.heuristic)) {
+                    best = bestSubtreeChild;
+                }
+
+            } else { // max node
+                Game bestSubtreeChild = MiniMax_value(child, maxDepth, player);
+                if (best == null || (player == 'x' && best.heuristic > bestSubtreeChild.heuristic) || (player == 'o' && best.heuristic < bestSubtreeChild.heuristic)) {
+                    best = bestSubtreeChild;
+                }
+
             }
-        }
     
         
+        }
         return best;
     }
 
-    public static int AlphaBetaComputerMove(Game board, char player) {
-        Game bestOutcome = AlphaBeta_decision(board, player);
+    public static int AlphaBetaComputerMove(Game board, char player, int maxDepth) {
+        Game bestOutcome = AlphaBeta_decision(board, player, maxDepth);
         return board.FirstMove(bestOutcome);
     }
     
-    static Game AlphaBeta_decision(Game board, char playerChar) {
-        int depthMax = 17 + board.depth;
+    static Game AlphaBeta_decision(Game board, char playerChar, int maxDepth) {
+        maxDepth = maxDepth + board.depth;
         LinkedList<Game> descendents = board.MakeDescendents();
         Game best = null;
         for (Game child : descendents) {
-            Game g = AlphaBeta_value(child, depthMax, Integer.MIN_VALUE, Integer.MAX_VALUE, playerChar);
+            Game g = AlphaBeta_value(child, maxDepth, Integer.MIN_VALUE, Integer.MAX_VALUE, playerChar);
             if (best == null) {
                 best = g;
             } else if (playerChar == 'x' && best.heuristic > g.heuristic) {
@@ -570,7 +578,7 @@ public class work{
         for (Game child : descendents) {
 
             
-            if (board.lastMovement != playerChar) { // min node
+            if (board.lastmove == playerChar) { // min node
                 
                 Game bestSubtreeChild = AlphaBeta_value(child, maxDepth, alpha, beta, playerChar);
                 if (best == null || (playerChar == 'x' && best.heuristic > bestSubtreeChild.heuristic) || (playerChar == 'o' && best.heuristic < bestSubtreeChild.heuristic)) {
@@ -602,26 +610,42 @@ public class work{
 
     //==========================================================//
 
-    static void initiateGame(int player1, int player2, int starts) {
+    static void initiateGame(int player1, int starts) {
         Scanner sc = new Scanner(System.in);
         Game board = new Game();
         boolean playerTurn = true;
         int move;
         int answer;
-        char boardInfo, boardInfo2;
+        char boardInfo, boardInfo2, boardBot;
+        int maxDepth;
     
         board.printBoard();
-    
+        
+
         if (starts == 1) {
             playerTurn = true;
             boardInfo = 'o';
             boardInfo2 = 'x';
+            
         } else {
             playerTurn = false;
             boardInfo = 'x';
             boardInfo2 = 'o';
+        
         }
         
+       if(player1 == 2){
+        maxDepth = 13;
+       }
+       else if(player1 == 3){
+        maxDepth = 20;
+       }
+       else{
+        maxDepth = 17;
+       }
+
+            
+
         while (board.winner() == '-') {
             
             if(board.VerifyDraw() == true){
@@ -629,72 +653,147 @@ public class work{
                 return;
             }
 
-            if (playerTurn) {
-                switch (player1) {
-                    case 1:
+             switch (player1) {
+                case 1:
+                System.out.println("----------------------------------");
+                System.out.println("It's " + board.lastmove + " turn!");
+                board.printBoard();
+                    if(playerTurn){
+                    answer = sc.nextInt();
+                    while(answer < 1 || answer > 7){
+                        System.out.println("Please select a number between 1-7");
+                        board.printBoard();
                         answer = sc.nextInt();
-                        while(answer < 1 || answer > 7){
-                            System.out.println("Please select a number between 1-7");
-                            board.printBoard();
-                            answer = sc.nextInt();
                         }
-                        board.MakeMove(answer);
-                        playerTurn = false;
-                        break;
-                    case 2:
-                        move = MiniMaxComputerMovePlayer1(board, boardInfo);
-                        board.MakeMove(move);
-                        playerTurn = false;
-                        break;
-                    case 3:
-                        move = AlphaBetaComputerMove(board, boardInfo);
-                        board.MakeMove(move);
-                        playerTurn = false;
-                        break;
-                }
-            } else {
-                switch (player2) {
-                    case 1:
+                        
+                    }
+                    else{
                         answer = sc.nextInt();
                         while(answer < 1 || answer > 7){
                         System.out.println("Please select a number between 1-7");
                         board.printBoard();
                         answer = sc.nextInt();
                         }
-                        playerTurn = true;
-                        break;
-                    case 2:
-                        move = MiniMaxComputerMovePlayer1(board, boardInfo2);
-                        board.MakeMove(move);
-                        playerTurn = true;
-                        break;
-                    case 3:
-                        move = AlphaBetaComputerMove(board, boardInfo2);
-                        board.MakeMove(move);
-                        playerTurn = true;
-                        System.out.println("Entrei");
-                        break;
-                }
-            }
-            
+                    }
 
-            System.out.println("----------------------------------");
-            System.out.println("It's " + board.lastmove + " turn!");
+                    board.MakeMove(answer);
+                    break;
+
+                    case 2:
+                    System.out.println("----------------------------------");
+                    System.out.println("It's " + board.lastmove + " turn!");
+                    board.printBoard();
+                    if(playerTurn){
+                        answer = sc.nextInt();
+                        while(answer < 1 || answer > 7){
+                            System.out.println("Please select a number between 1-7");
+                            board.printBoard();
+                            answer = sc.nextInt();
+                            }
+                            move = answer;
+                            playerTurn = false;
+                        }
+                    else{
+                         move = MiniMaxComputerMovePlayer1(board, boardInfo2, maxDepth);
+                         playerTurn = true;
+                        
+                        }
+                    
+                    board.MakeMove(move);
+                    break;
+
+                    case 3:
+                    System.out.println("----------------------------------");
+                    System.out.println("It's " + board.lastmove + " turn!");
+                    board.printBoard();
+                    if(playerTurn){
+                        answer = sc.nextInt();
+                        while(answer < 1 || answer > 7){
+                            System.out.println("Please select a number between 1-7");
+                            board.printBoard();
+                            answer = sc.nextInt();
+                            }
+                            move = answer;
+                            playerTurn = false;
+                        }
+                    else{
+                         move = AlphaBetaComputerMove(board, boardInfo2, maxDepth);
+                         playerTurn = true;
+                         
+                        }
+                    
+                    board.MakeMove(move);
+                    break;
+
+                    case 4:
+                    System.out.println("----------------------------------");
+                    System.out.println("It's " + board.lastmove + " turn!");
+                    board.printBoard();
+                    if(playerTurn){
+                        move = MiniMaxComputerMovePlayer1(board, boardInfo, maxDepth);
+                        playerTurn = false;
+                        }
+                    else{
+                         move = MiniMaxComputerMovePlayer1(board, boardInfo2, maxDepth);
+                         playerTurn = true;
+                         
+                        }
+                    
+                    board.MakeMove(move);
+                    break;
+
+                    case 5:
+                    System.out.println("----------------------------------");
+                    System.out.println("It's " + board.lastmove + " turn!");
+                    board.printBoard();
+                    if(playerTurn){
+                        move = AlphaBetaComputerMove(board, boardInfo, maxDepth);
+                        playerTurn = false;
+                        }
+                    else{
+                         move = AlphaBetaComputerMove(board, boardInfo2, maxDepth);
+                         playerTurn = true;
+                         
+                        }
+                    
+                    board.MakeMove(move);
+                    break;
+
+                    case 6:
+                    System.out.println("----------------------------------");
+                    System.out.println("It's " + board.lastmove + " turn!");
+                    board.printBoard();
+                    if(playerTurn){
+                        move = MiniMaxComputerMovePlayer1(board, boardInfo, maxDepth);
+                        playerTurn = false;
+                        }
+                    else{
+                         move = AlphaBetaComputerMove(board, boardInfo2, maxDepth);
+                         playerTurn = true;
+                         
+                        }
+                    
+                    board.MakeMove(move);
+                    break;
+                }   
+                
+            }
+                      
             //int heuristica = board.heuristic();
             //System.out.println("Heuristic: " + heuristica);
-            board.printBoard();
             //System.out.println("Nodes Pruned: " + board.prunedNodes);
+            if(board.lastmove == 'x'){
+            System.out.println("\n\n Player 'O' WON!!");
+            }
+            else{
+                System.out.println("\n\n Player 'X' WON!!");
+            }
     
         }
         
-        if(board.lastmove == 'x'){
-        System.out.println("\n\n Player 'O' WON!!");
-        }
-        else{
-            System.out.println("\n\n Player 'X' WON!!");
-        }
     
-    }
+
+    
 
 
     public static void main(String Argrs[]){
@@ -713,35 +812,21 @@ public class work{
         
         //==== MENU ====//
 
-        while(answer < 1 || answer > 4){
+        while(answer < 1 || answer > 7){
             System.out.println("----------");
             System.out.println("Welcome!");
-            System.out.println("Player 1 selection: ");
-            System.out.println("1º - Human");
-            System.out.println("2º - Minimax");
-            System.out.println("3º - Alpha");
-            System.out.println("4º - MonteCarlo");
+            System.out.println("Game Selection ");
+            System.out.println("1º - P1: Human vs P2: Human");
+            System.out.println("2º - P1: Human Vs P2: Minimax");
+            System.out.println("3º - P1: Human Vs P2: AlphaBeta");
+            System.out.println("4º - P1: Minimax Vs P2: Minimax");
+            System.out.println("5º - P1: AlphaBeta vs P2: AlphaBeta");
+            System.out.println("6º - P1: Minimax vs P2: AlphaBeta");
             System.out.println("----------");
             answer = sc.nextInt();
         }
 
         player1 = answer;
-        answer = 0;
-        
-
-        
-        while(answer < 1 || answer > 4){
-            System.out.println("----------");
-            System.out.println("Player 2 selection: ");
-            System.out.println("1º - Human");
-            System.out.println("2º - Minimax");
-            System.out.println("3º - Alpha");
-            System.out.println("4º - MonteCarlo");
-            System.out.println("----------");
-            answer = sc.nextInt();
-        }
-
-        player2 = answer;
         answer = 0;
         
 
@@ -761,7 +846,7 @@ public class work{
 
         long startTime = System.currentTimeMillis();
         
-        initiateGame(player1, player2, Starts);
+        initiateGame(player1, Starts);
         
         long endTime = System.currentTimeMillis();
         long elapsedTime = endTime - startTime;
