@@ -765,9 +765,6 @@ public class work{
                 
             }
                       
-            //int heuristica = board.heuristic();
-            //System.out.println("Heuristic: " + heuristica);
-            //System.out.println("Nodes Pruned: " + board.prunedNodes);
             if(board.lastmove == 'x'){
                 System.out.println("\n\n Player 'O' WON!!");
                 board.printBoard();
