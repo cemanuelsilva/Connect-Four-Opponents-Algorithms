@@ -101,7 +101,7 @@ public class work{
                 Game novo = new Game(this.configInicial, this.lastmove, this.depth);
                 novo.pai = this;
                 novo.MakeMove(move);
-                novo.depth++;
+                //novo.depth++;
                 //novo.printBoard();
                 //System.out.println("---Verify--");
                 tabuleiros.add(novo);
@@ -121,7 +121,7 @@ public class work{
             lastMovement = move;
             move--;
 
-            if(move > 6 || move < 0){
+            if(move >= 7 || move < 0){
                 System.out.println("Not possible!");
                 return;   
             }
@@ -480,7 +480,6 @@ public class work{
     
     public static Game MiniMax_decision(Game board, char player, int maxDepth) {
         
-        maxDepth = maxDepth + board.depth;
         board.pai = null;
         LinkedList<Game> descendents = board.MakeDescendents();
         //n.pai = null
@@ -534,6 +533,8 @@ public class work{
                 }
 
             }
+
+            child.changePlay();
     
         
         }
@@ -602,6 +603,8 @@ public class work{
                     return best;
                 }
             }
+
+            child.changePlay();
         }
         return best;
     }
@@ -635,18 +638,20 @@ public class work{
         }
         
        if(player1 == 2){
-        maxDepth = 13;
+        maxDepth = 2;
        }
        else if(player1 == 3){
-        maxDepth = 20;
+        maxDepth = 2;
        }
        else{
-        maxDepth = 17;
+        maxDepth = 10;
        }
 
             
 
         while (board.winner() == '-') {
+
+            board.printBoard();
             
             if(board.VerifyDraw() == true){
                 System.out.println("\n\nDRAW!");
