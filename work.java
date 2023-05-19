@@ -49,7 +49,7 @@ public class work{
 
         }
 
-        //============CLASS SUPPORT ======================================//
+        //============ CLASS SUPPORT ======================================//
 
         public void printBoard() {
       
@@ -68,8 +68,6 @@ public class work{
             System.out.println();
         }
     
-
-        // dar fix
         
         LinkedList<Integer> PossibleMoves(){
 
@@ -80,12 +78,6 @@ public class work{
                     possible.add(j+1);
                 }
             }
-
-            /*
-            for(int i = 0; i < possible.size(); i++){
-                System.out.print(possible.get(i));
-            }
-            */
 
             return possible;
 
@@ -101,9 +93,6 @@ public class work{
                 Game novo = new Game(this.configInicial, this.lastmove, this.depth);
                 novo.pai = this;
                 novo.MakeMove(move);
-                //novo.depth++;
-                //novo.printBoard();
-                //System.out.println("---Verify--");
                 tabuleiros.add(novo);
                 
             }
@@ -185,44 +174,36 @@ public class work{
 
             if(verifyColumn() != '-'){
                 if(verifyColumn() == 'x'){
-                    //System.out.println("Ganhou: x");
                     return 'x';
                 }
                 else{
-                    //System.out.println("Ganhou: o");
                     return 'o';
                 }
             }
 
             if(verifyLine() != '-'){
                 if(verifyLine() == 'x'){
-                    //System.out.println("Ganhou: x");
                     return 'x';
                 }
                 else{
-                    //System.out.println("Ganhou: o");
                     return 'o';
                 }
             }
 
             if(verifyDiagonalLeft() != '-'){
                 if(verifyDiagonalLeft() == 'x'){
-                    //System.out.println("Ganhou: x");
                     return 'x';
                 }
                 else{
-                    //System.out.println("Ganhou: o");
                     return 'o';
                 }
             }
 
             if(verifyDiagonalRight() != '-'){
                 if(verifyDiagonalRight() == 'x'){
-                    //System.out.println("Ganhou: x");
                     return 'x';
                 }
                 else{
-                    //System.out.println("Ganhou: o");
                     return 'o';
                 }
             }
@@ -238,7 +219,6 @@ public class work{
                 for(int j = 0; j <4; j++){
                     if(configInicial[i][j] != '-'){
                         if((configInicial[i][j] == configInicial[i][j+1] && configInicial[i][j] == configInicial[i][j+2] && configInicial[i][j] == configInicial[i][j+3])){
-                            //System.out.println("Ganhou: " + configInicial[i][j]);
                             return configInicial[i][j];
                         }
                     }
@@ -255,7 +235,6 @@ public class work{
                 for(int j = 0; j <7; j++){
                     if(configInicial[i][j] != '-'){
                         if((configInicial[i][j] == configInicial[i+1][j] && configInicial[i][j] == configInicial[i+2][j] && configInicial[i][j] == configInicial[i+3][j])){
-                            //System.out.println("Ganhou: " + configInicial[i][j]);
                             return configInicial[i][j];
                         }
                     }
@@ -273,7 +252,6 @@ public class work{
                     for(int j = 0; j < 4; j++){
                         if(configInicial[i][j] != '-'){
                             if((configInicial[i][j] == configInicial[i-1][j+1] && configInicial[i][j] == configInicial[i-2][j+2] && configInicial[i][j] == configInicial[i-3][j+3])){
-                                //System.out.println("Ganhou: " + configInicial[i][j]);
                                 return configInicial[i][j];
                             }
                         }
@@ -289,7 +267,6 @@ public class work{
                 for(int j = 0; j < 4; j++){
                     if(configInicial[i][j] != '-'){
                         if((configInicial[i][j] == configInicial[i+1][j+1] && configInicial[i][j] == configInicial[i+2][j+2] && configInicial[i][j] == configInicial[i+3][j+3])){
-                            //System.out.println("Ganhou: " + configInicial[i][j]);
                             return configInicial[i][j];
                         }
                     }
@@ -311,7 +288,7 @@ public class work{
             count += evalDiagonalRight();
             count += evalLines();
             
-            //System.out.println(count);
+            
             return count;
         }
         
@@ -354,7 +331,7 @@ public class work{
             int count = 0;
             int countX = 0;
             int countY = 0;
-        //nº de colunas
+        
             for(int k = 0; k<4; k++){
                 for(int i = 5; i > 0; i--){
                     for(int j = 0; j <4; j++){
@@ -382,7 +359,7 @@ public class work{
             int count = 0;
             int countX = 0;
             int countY = 0;
-        //nº de colunas
+        
         for(int k = 0; k<7; k++){
             for(int i = 0; i < 3; i++){
                 for(int j = 0; j <4; j++){
@@ -622,7 +599,7 @@ public class work{
         char boardInfo, boardInfo2, boardBot;
         int maxDepth;
     
-        board.printBoard();
+        //board.printBoard();
         
 
         if (starts == 1) {
@@ -636,13 +613,16 @@ public class work{
             boardInfo2 = 'o';
         
         }
-        
+       
+       //Player Plays 
        if(player1 == 2){
         maxDepth = 2;
        }
+       //Player Plays
        else if(player1 == 3){
         maxDepth = 2;
        }
+       //Computer vs Computer
        else{
         maxDepth = 10;
        }
@@ -651,10 +631,11 @@ public class work{
 
         while (board.winner() == '-') {
 
-            board.printBoard();
+            //board.printBoard();
             
             if(board.VerifyDraw() == true){
                 System.out.println("\n\nDRAW!");
+                board.printBoard();
                 return;
             }
 
@@ -788,10 +769,12 @@ public class work{
             //System.out.println("Heuristic: " + heuristica);
             //System.out.println("Nodes Pruned: " + board.prunedNodes);
             if(board.lastmove == 'x'){
-            System.out.println("\n\n Player 'O' WON!!");
+                System.out.println("\n\n Player 'O' WON!!");
+                board.printBoard();
             }
             else{
                 System.out.println("\n\n Player 'X' WON!!");
+                board.printBoard();
             }
     
         }
@@ -811,13 +794,14 @@ public class work{
         int player1;
         int player2;
         int answer = 0;
+        int game = 0;
         int Starts;
 
         //====================//
         
         //==== MENU ====//
 
-        while(answer < 1 || answer > 7){
+        while(game < 1 || game > 7){
             System.out.println("----------");
             System.out.println("Welcome!");
             System.out.println("Game Selection ");
@@ -828,12 +812,9 @@ public class work{
             System.out.println("5º - P1: AlphaBeta vs P2: AlphaBeta");
             System.out.println("6º - P1: Minimax vs P2: AlphaBeta");
             System.out.println("----------");
-            answer = sc.nextInt();
+            game = sc.nextInt();
+            
         }
-
-        player1 = answer;
-        answer = 0;
-        
 
         while(answer < 1 || answer > 3){
             System.out.println("----------");
@@ -851,15 +832,24 @@ public class work{
 
         long startTime = System.currentTimeMillis();
         
-        initiateGame(player1, Starts);
+        initiateGame(game, Starts);
         
         long endTime = System.currentTimeMillis();
         long elapsedTime = endTime - startTime;
         double elapsedSeconds = (double)elapsedTime / 1000.0;
-        System.out.println("Elapsed time: " + elapsedSeconds + " seconds");
-        System.out.println("Pruning: " + countPruning);
-        System.out.println("Minimax nodes: " + countMinimax);
-        System.out.println("AlphaBeta nodes: " + countAlphaBeta);
+
+        if(game > 1){
+
+            if(game == 2 || game == 4){
+                System.out.println("Elapsed time: " + elapsedSeconds + " seconds");
+                System.out.println("Minimax nodes: " + countMinimax);
+            }
+            else{
+                System.out.println("Elapsed time: " + elapsedSeconds + " seconds");
+                System.out.println("AlphaBeta nodes: " + countAlphaBeta);
+                System.out.println("Pruning: " + countPruning);
+            }
+        }
         
         }
     }
