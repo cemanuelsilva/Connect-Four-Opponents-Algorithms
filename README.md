@@ -27,3 +27,7 @@ else if(player1 == 3){
     maxDepth = 10;
   }
 ```
+
+### Warning
+
+Still have some bugs and errors, will fix it later.
