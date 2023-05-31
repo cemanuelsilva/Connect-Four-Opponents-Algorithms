@@ -30,4 +30,4 @@ else if(player1 == 3){
 
 ### Warning
 
-Still have some bugs and errors, will fix it later.
+Still have some bugs and bad decisions, will fix it later.
